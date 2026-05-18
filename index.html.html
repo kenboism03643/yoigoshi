@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOIGOSHI 寄初〜 vol.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#050505;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Space Mono',monospace;}
+#app{width:100%;max-width:480px;background:#0a0a0a;color:#f5f2eb;min-height:100vh;position:relative;}
+.screen{display:none;}
+.screen.active{display:block;}
+.hdr{background:#0a0a0a;border-bottom:2px solid #1a1aff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-title{font-size:16px;font-weight:700;letter-spacing:.1em;}
+.hdr-sub{font-size:9px;color:#1a1aff;letter-spacing:.15em;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
+.scroll{max-height:calc(100vh - 120px);overflow-y:auto;}
+.lbl{font-size:9px;letter-spacing:.15em;color:#1a1aff;margin-bottom:5px;display:block;}
+.inp{width:100%;background:#111;border:1.5px solid #333;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:13px;padding:11px 13px;outline:none;transition:border-color .2s;margin-bottom:14px;}
+.inp:focus{border-color:#1a1aff;}
+.inp::placeholder{color:#555;}
+.btn-blue{width:100%;background:#1a1aff;color:#f5f2eb;border:none;border-radius:6px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.08em;padding:13px;cursor:pointer;transition:opacity .2s;}
+.btn-blue:hover{opacity:.85;}
+.btn-blue:disabled{opacity:.4;cursor:not-allowed;}
+.card{background:#111;border:1px solid #222;border-radius:8px;padding:14px;}
+.sec-title{font-size:9px;letter-spacing:.2em;color:#555;margin-bottom:10px;border-bottom:1px solid #1a1a1a;padding-bottom:5px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 18px 0;}
+.stat{background:#111;border:1px solid #222;border-radius:8px;padding:13px;}
+.stat-lbl{font-size:8px;letter-spacing:.15em;color:#666;}
+.stat-val{font-size:22px;font-weight:700;margin-top:3px;}
+.gold{color:#c8a84b;}
+.blue{color:#1a1aff;}
+.red{color:#cc2200;}
+.tkt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.tkt{background:#111;border:1px solid #333;border-radius:5px;padding:7px 3px;text-align:center;}
+.tkt.won{border-color:#c8a84b;background:#1a1500;}
+.tkt-num{font-size:10px;font-weight:700;}
+.tkt-src{font-size:7px;color:#555;margin-top:1px;font-family:'Noto Sans JP',sans-serif;}
+.tkt-star{font-size:7px;color:#c8a84b;}
+.btn-act{background:#111;border:1.5px solid #333;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:11px;padding:11px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s,background .2s;width:100%;}
+.btn-act:hover{border-color:#1a1aff;background:#0a0a1a;}
+.spot{background:#111;border:1.5px solid #333;border-radius:7px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .2s;margin-bottom:9px;}
+.spot:hover{border-color:#1a1aff;}
+.spot.done{border-color:#c8a84b;background:#1a1500;}
+.spot-name{font-size:11px;font-weight:700;}
+.spot-sub{font-size:8px;color:#666;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
+.badge{font-size:9px;padding:3px 9px;border-radius:4px;font-weight:700;}
+.badge.pending{background:#222;color:#666;border:1px solid #333;}
+.badge.done{background:#1a1500;color:#c8a84b;border:1px solid #c8a84b;}
+.nav{display:flex;background:#050505;border-top:1px solid #1a1a1a;position:sticky;bottom:0;}
+.nav-btn{flex:1;padding:11px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.08em;color:#555;background:transparent;border:none;cursor:pointer;transition:color .2s;}
+.nav-btn.active{color:#1a1aff;}
+.nav-btn:hover{color:#f5f2eb;}
+.btn-back{background:transparent;border:1.5px solid #333;border-radius:6px;color:#888;font-family:'Space Mono',monospace;font-size:10px;padding:9px 14px;cursor:pointer;width:100%;transition:border-color .2s;}
+.btn-back:hover{border-color:#555;}
+.user-row{background:#111;border:1px solid #222;border-radius:6px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between;font-size:11px;margin-bottom:7px;}
+.u-sub{font-size:9px;color:#555;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
+.give-row{display:flex;gap:8px;align-items:flex-end;}
+.give-inp{flex:1;background:#0a0a0a;border:1.5px solid #333;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:12px;padding:9px 11px;outline:none;}
+.give-inp:focus{border-color:#c8a84b;}
+.btn-gold{background:#c8a84b;color:#0a0a0a;border:none;border-radius:6px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:9px 14px;cursor:pointer;white-space:nowrap;}
+.btn-gold:hover{opacity:.85;}
+.lottery-box{background:#111;border:1.5px solid #c8a84b;border-radius:10px;padding:18px;text-align:center;}
+.lot-num{font-size:44px;font-weight:700;color:#c8a84b;line-height:1;margin:14px 0;min-height:54px;}
+.lot-winner{font-size:12px;font-family:'Noto Sans JP',sans-serif;margin-top:6px;}
+.lot-winner.none{color:#555;}
+.btn-lot{background:#c8a84b;color:#0a0a0a;border:none;border-radius:6px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;padding:11px;cursor:pointer;width:100%;margin-top:10px;}
+.btn-lot:hover{opacity:.85;}
+.toast-wrap{height:44px;display:flex;align-items:center;justify-content:center;padding:0 20px;}
+.toast-msg{font-size:11px;padding:8px 16px;border-radius:5px;background:#1a1aff;color:#f5f2eb;opacity:0;transition:opacity .3s;text-align:center;}
+.toast-msg.gold{background:#c8a84b;color:#0a0a0a;}
+.toast-msg.show{opacity:1;}
+.link{color:#1a1aff;cursor:pointer;text-decoration:underline;font-size:10px;text-align:center;display:block;margin-top:10px;font-family:'Noto Sans JP',sans-serif;}
+.err{color:#cc2200;font-size:10px;font-family:'Noto Sans JP',sans-serif;margin-top:-10px;margin-bottom:10px;min-height:14px;}
+#loading-overlay{position:fixed;inset:0;background:#0a0a0a;display:flex;align-items:center;justify-content:center;z-index:100;}
+.loading-text{font-size:12px;letter-spacing:.1em;color:#1a1aff;font-family:'Space Mono',monospace;}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay">
+  <div class="loading-text" id="load-txt">接続中...</div>
+</div>
+
+<div id="app">
+
+<!-- LOGIN -->
+<div id="login-screen" class="screen">
+  <div style="padding:36px 24px 20px;text-align:center;">
+    <svg width="72" height="72" viewBox="0 0 80 80" style="margin:0 auto 14px;display:block;">
+      <circle cx="40" cy="40" r="38" fill="#1a1aff" opacity=".15"/>
+      <ellipse cx="40" cy="44" rx="22" ry="18" fill="#1a1aff"/>
+      <ellipse cx="40" cy="34" rx="16" ry="14" fill="#1a1aff"/>
+      <ellipse cx="28" cy="22" rx="7" ry="9" fill="#1a1aff" transform="rotate(-15 28 22)"/>
+      <ellipse cx="52" cy="22" rx="7" ry="9" fill="#1a1aff" transform="rotate(15 52 22)"/>
+      <circle cx="34" cy="32" r="4" fill="#f5f2eb"/><circle cx="46" cy="32" r="4" fill="#f5f2eb"/>
+      <circle cx="35" cy="31" r="2" fill="#0a0a0a"/><circle cx="47" cy="31" r="2" fill="#0a0a0a"/>
+      <ellipse cx="40" cy="38" rx="4" ry="2.5" fill="#c8a84b"/>
+      <ellipse cx="40" cy="58" rx="14" ry="5" fill="#1545cc"/>
+    </svg>
+    <div style="font-size:26px;font-weight:700;letter-spacing:.15em;">YOIGOSHI</div>
+    <div style="font-size:13px;color:#c8a84b;margin-top:4px;font-family:'Noto Sans JP',sans-serif;">寄初〜 vol.1</div>
+    <div style="font-size:10px;color:#c8a84b;margin-top:3px;letter-spacing:.2em;">2025.06.12 FRI</div>
+    <div style="font-size:10px;color:#555;margin-top:2px;font-family:'Noto Sans JP',sans-serif;">渋谷 UNDERBAR</div>
+  </div>
+  <div style="padding:0 24px 24px;">
+    <label class="lbl">INSTAGRAM ID</label>
+    <input class="inp" id="ig-inp" placeholder="@username" type="text" autocomplete="off"/>
+    <label class="lbl">PASSWORD</label>
+    <input class="inp" id="pw-inp" placeholder="エントランスでお伝えします" type="password"/>
+    <div class="err" id="login-err"></div>
+    <button class="btn-blue" id="login-btn" onclick="doLogin()">入場する</button>
+    <div style="font-size:9px;color:#555;text-align:center;margin-top:10px;font-family:'Noto Sans JP',sans-serif;">パスワードはエントランスでお伝えします</div>
+    <span class="link" onclick="showScreen('admin-login-screen')">主催者ログイン →</span>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div id="admin-login-screen" class="screen">
+  <div style="padding:40px 24px 20px;text-align:center;">
+    <div style="font-size:36px;color:#cc2200;">⚙</div>
+    <div style="font-size:18px;font-weight:700;letter-spacing:.1em;margin-top:12px;">ADMIN</div>
+    <div style="font-size:10px;color:#555;margin-top:4px;font-family:'Noto Sans JP',sans-serif;">YOIGOSHI 管理画面</div>
+  </div>
+  <div style="padding:0 24px 24px;">
+    <label class="lbl">ADMIN PASSWORD</label>
+    <input class="inp" id="admin-pw-inp" placeholder="管理者パスワード" type="password"/>
+    <div class="err" id="admin-login-err"></div>
+    <button class="btn-blue" onclick="doAdminLogin()">ログイン</button>
+    <span class="link" onclick="showScreen('login-screen')">← 戻る</span>
+  </div>
+</div>
+
+<!-- USER -->
+<div id="user-screen" class="screen">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title" id="u-hdr-name">@username</div>
+      <div class="hdr-sub">YOIGOSHI 寄初〜 vol.1</div>
+    </div>
+    <svg width="36" height="36" viewBox="0 0 40 40">
+      <ellipse cx="20" cy="22" rx="12" ry="10" fill="#1a1aff"/>
+      <ellipse cx="20" cy="16" rx="9" ry="8" fill="#1a1aff"/>
+      <ellipse cx="13" cy="10" rx="4" ry="5" fill="#1a1aff" transform="rotate(-15 13 10)"/>
+      <ellipse cx="27" cy="10" rx="4" ry="5" fill="#1a1aff" transform="rotate(15 27 10)"/>
+      <circle cx="16" cy="15" r="2.5" fill="#f5f2eb"/><circle cx="24" cy="15" r="2.5" fill="#f5f2eb"/>
+      <circle cx="17" cy="14.5" r="1.2" fill="#0a0a0a"/><circle cx="25" cy="14.5" r="1.2" fill="#0a0a0a"/>
+      <ellipse cx="20" cy="19" rx="2.5" ry="1.5" fill="#c8a84b"/>
+    </svg>
+  </div>
+  <div class="scroll">
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-lbl">MY TICKETS</div><div class="stat-val gold" id="u-tkt-cnt">0</div></div>
+      <div class="stat"><div class="stat-lbl">TOTAL ISSUED</div><div class="stat-val blue" id="total-tkt-cnt">0</div></div>
+    </div>
+    <div style="padding:16px 18px 8px;">
+      <div class="sec-title">MY TICKET NUMBERS</div>
+      <div class="tkt-grid" id="tkt-grid">
+        <div style="color:#555;font-size:10px;font-family:'Noto Sans JP',sans-serif;grid-column:span 4;padding:4px 0;">まだチケットがありません</div>
+      </div>
+    </div>
+    <div style="padding:0 18px 12px;">
+      <button class="btn-act" onclick="showScreen('qr-screen');renderQr();">
+        <span>QRスキャン <span style="color:#555;font-size:9px;">エリアを回ってチケットGET</span></span>
+        <span style="color:#1a1aff;">→</span>
+      </button>
+    </div>
+    <div style="padding:0 18px 18px;">
+      <div class="sec-title">TICKET ルール</div>
+      <div class="card" style="font-size:9px;color:#888;line-height:2;font-family:'Noto Sans JP',sans-serif;">
+        入場時 +1枚 / 19時前入場 +1枚<br>
+        滞在1時間ごと +1枚（自動）<br>
+        ライブペイントブース QR +1枚<br>
+        DJブース QR +1枚<br>
+        シャンパン注文 +2枚（スタッフ付与）<br>
+        <span style="color:#c8a84b;">全チケットから1枚を抽選 → Tシャツプレゼント</span>
+      </div>
+    </div>
+  </div>
+  <div class="toast-wrap"><div class="toast-msg" id="u-toast"></div></div>
+  <div class="nav">
+    <button class="nav-btn active">チケット</button>
+    <button class="nav-btn" onclick="doLogout()">ログアウト</button>
+  </div>
+</div>
+
+<!-- QR -->
+<div id="qr-screen" class="screen">
+  <div class="hdr">
+    <div><div class="hdr-title">QR SCAN</div><div class="hdr-sub">エリアを回ってチケットをGET</div></div>
+  </div>
+  <div style="padding:18px;">
+    <div style="font-size:10px;color:#888;margin-bottom:16px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">各ブースのQRをスキャンしてチケットを獲得。1エリアにつき1枚。</div>
+    <div id="qr-list"></div>
+    <button class="btn-back" onclick="showScreen('user-screen');refreshUser();">← 戻る</button>
+  </div>
+  <div class="toast-wrap"><div class="toast-msg" id="qr-toast"></div></div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen" class="screen">
+  <div class="hdr">
+    <div><div class="hdr-title">ADMIN</div><div class="hdr-sub">YOIGOSHI 管理画面</div></div>
+    <button onclick="doAdminLogout()" style="background:transparent;border:1px solid #333;border-radius:4px;color:#888;font-family:'Space Mono',monospace;font-size:9px;padding:5px 9px;cursor:pointer;">ログアウト</button>
+  </div>
+  <div class="scroll" style="padding:18px;">
+    <div style="background:#1a0000;border:1px solid #cc2200;border-radius:7px;padding:10px 14px;margin-bottom:18px;font-size:10px;color:#cc2200;letter-spacing:.08em;">
+      ⚠ 主催者専用 — 関係者以外アクセス禁止
+    </div>
+    <div class="sec-title">LIVE STATS</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;">
+      <div class="stat" style="text-align:center;"><div class="stat-val blue" id="ad-visitors">0</div><div class="stat-lbl" style="margin-top:3px;">来場者数</div></div>
+      <div class="stat" style="text-align:center;"><div class="stat-val gold" id="ad-tkts">0</div><div class="stat-lbl" style="margin-top:3px;">総チケット</div></div>
+      <div class="stat" style="text-align:center;"><div class="stat-val red" id="ad-early">0</div><div class="stat-lbl" style="margin-top:3px;">早期入場</div></div>
+    </div>
+    <div class="sec-title">シャンパンチケット付与</div>
+    <div class="card" style="margin-bottom:18px;">
+      <div class="give-row">
+        <div style="flex:1;">
+          <label class="lbl">INSTAGRAM ID</label>
+          <input class="give-inp" id="give-ig" placeholder="@username" type="text"/>
+        </div>
+        <button class="btn-gold" onclick="giveChampagne()">+2枚</button>
+      </div>
+      <div class="err" id="give-err" style="margin-top:8px;margin-bottom:0;"></div>
+    </div>
+    <div class="sec-title">来場者一覧</div>
+    <div id="ad-users" style="margin-bottom:18px;"></div>
+    <div class="sec-title">抽選</div>
+    <div class="lottery-box">
+      <div style="font-size:10px;color:#888;letter-spacing:.15em;">TICKET LOTTERY</div>
+      <div class="lot-num" id="lot-num">—</div>
+      <div class="lot-winner none" id="lot-winner">抽選を実行してください</div>
+      <button class="btn-lot" onclick="runLottery()">抽選を実行</button>
+    </div>
+    <div style="height:20px;"></div>
+  </div>
+  <div class="toast-wrap"><div class="toast-msg" id="ad-toast"></div></div>
+</div>
+
+</div>
+
+<script>
+const SUPA_URL = 'https://wyvgdaxtmuynouzupdmw.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5dmdkYXh0bXV5bm91enVwZG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNjU3MjcsImV4cCI6MjA5NDY0MTcyN30.2_tt0_Iy2-AeaFsU4_wYryXZKdoAEaSmlx0aQiYZ_Ag';
+const EVENT_PW = 'yoigoshi2025';
+const ADMIN_PW = 'admin1612';
+const QR_SPOTS = [
+  {id:'livepaint', name:'LIVE PAINT BOOTH', sub:'ライブペイントエリア'},
+  {id:'dj', name:'DJ BOOTH', sub:'DJブース'},
+];
+
+let currentUser = null;
+let lotteryWinner = null;
+
+const hdrs = {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+
+async function sb(method, table, body, params='') {
+  const res = await fetch(SUPA_URL+'/rest/v1/'+table+(params?'?'+params:''), {
+    method,
+    headers: {...hdrs, ...(method==='POST'||method==='PATCH'?{'Prefer':'return=representation'}:{})},
+    body: body ? JSON.stringify(body) : undefined
+  });
+  if (!res.ok) { const e = await res.text(); throw new Error(e); }
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : null;
+}
+
+async function getUser(ig) {
+  const r = await sb('GET','users',null,'ig=eq.'+encodeURIComponent(ig)+'&select=*');
+  return r && r[0] ? r[0] : null;
+}
+async function getUserTickets(ig) {
+  return await sb('GET','tickets',null,'ig=eq.'+encodeURIComponent(ig)+'&order=ticket_num.asc') || [];
+}
+async function getAllTickets() {
+  return await sb('GET','tickets',null,'order=ticket_num.asc') || [];
+}
+async function getAllUsers() {
+  return await sb('GET','users',null,'order=created_at.asc&select=*') || [];
+}
+async function insertTicket(ig, reason) {
+  return await sb('POST','tickets',{ig, reason});
+}
+async function insertUser(ig, isEarly) {
+  return await sb('POST','users',{ig, is_early:isEarly, arrived_at:new Date().toISOString(), scanned:{}});
+}
+async function updateScanned(ig, scanned) {
+  await sb('PATCH','users',{scanned},'ig=eq.'+encodeURIComponent(ig));
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toast(id, msg, gold=false) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'toast-msg'+(gold?' gold':'')+' show';
+  setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+async function doLogin() {
+  const ig = document.getElementById('ig-inp').value.trim().replace(/^@/,'');
+  const pw = document.getElementById('pw-inp').value;
+  const err = document.getElementById('login-err');
+  const btn = document.getElementById('login-btn');
+  err.textContent='';
+  if (!ig){err.textContent='アカウント名を入力してください';return;}
+  if (pw!==EVENT_PW){err.textContent='パスワードが違います';return;}
+  btn.disabled=true; btn.textContent='確認中...';
+  try {
+    let user = await getUser(ig);
+    if (!user) {
+      const isEarly = new Date().getHours() < 19;
+      await insertUser(ig, isEarly);
+      await insertTicket(ig,'入場');
+      if (isEarly) await insertTicket(ig,'早期入場');
+      user = await getUser(ig);
+    }
+    currentUser = user;
+    await refreshUser();
+    showScreen('user-screen');
+  } catch(e) {
+    err.textContent='エラー: '+e.message;
+  }
+  btn.disabled=false; btn.textContent='入場する';
+}
+
+async function refreshUser() {
+  if (!currentUser) return;
+  const user = await getUser(currentUser.ig);
+  if (user) currentUser = user;
+  const tkts = await getUserTickets(currentUser.ig);
+  const allTkts = await getAllTickets();
+  document.getElementById('u-hdr-name').textContent = '@'+currentUser.ig;
+  document.getElementById('u-tkt-cnt').textContent = tkts.length;
+  document.getElementById('total-tkt-cnt').textContent = allTkts.length;
+  const grid = document.getElementById('tkt-grid');
+  if (!tkts.length) {
+    grid.innerHTML='<div style="color:#555;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;grid-column:span 4;padding:4px 0;">まだチケットがありません</div>';
+  } else {
+    const wn = lotteryWinner ? lotteryWinner.ticket_num : null;
+    grid.innerHTML=tkts.map(t=>`
+      <div class="tkt ${wn===t.ticket_num?'won':''}">
+        <div class="tkt-num">#${t.ticket_num}</div>
+        <div class="tkt-src">${t.reason}</div>
+        ${wn===t.ticket_num?'<div class="tkt-star">★ 当選</div>':''}
+      </div>`).join('');
+  }
+  await checkHourly();
+}
+
+async function checkHourly() {
+  if (!currentUser) return;
+  const arrivedAt = new Date(currentUser.arrived_at).getTime();
+  const now = Date.now();
+  const hours = Math.floor((now - arrivedAt) / 3600000);
+  const tkts = await getUserTickets(currentUser.ig);
+  const hourTkts = tkts.filter(t=>t.reason==='滞在ボーナス').length;
+  const due = hours - hourTkts;
+  for (let i=0;i<due;i++) await insertTicket(currentUser.ig,'滞在ボーナス');
+  if (due>0) toast('u-toast','滞在ボーナス +'+due+'枚！',true);
+}
+
+async function renderQr() {
+  if (!currentUser) return;
+  const user = await getUser(currentUser.ig);
+  currentUser = user;
+  const scanned = user.scanned || {};
+  document.getElementById('qr-list').innerHTML = QR_SPOTS.map(s=>`
+    <div class="spot ${scanned[s.id]?'done':''}" onclick="scanQR('${s.id}')">
+      <div>
+        <div class="spot-name">${s.name}</div>
+        <div class="spot-sub">${s.sub}</div>
+      </div>
+      <div class="badge ${scanned[s.id]?'done':'pending'}">${scanned[s.id]?'取得済み':'+1枚'}</div>
+    </div>`).join('');
+}
+
+async function scanQR(spotId) {
+  const user = await getUser(currentUser.ig);
+  const scanned = user.scanned || {};
+  if (scanned[spotId]){toast('qr-toast','このブースは取得済みです');return;}
+  scanned[spotId]=true;
+  await updateScanned(currentUser.ig, scanned);
+  const spot = QR_SPOTS.find(s=>s.id===spotId);
+  await insertTicket(currentUser.ig, spot.name);
+  toast('qr-toast', spot.name+' +1枚！', true);
+  currentUser.scanned = scanned;
+  await renderQr();
+}
+
+async function doAdminLogin() {
+  const pw = document.getElementById('admin-pw-inp').value;
+  const err = document.getElementById('admin-login-err');
+  if (pw!==ADMIN_PW){err.textContent='管理者パスワードが違います';return;}
+  await refreshAdmin();
+  showScreen('admin-screen');
+}
+
+async function refreshAdmin() {
+  try {
+    const users = await getAllUsers();
+    const allTkts = await getAllTickets();
+    document.getElementById('ad-visitors').textContent=users.length;
+    document.getElementById('ad-tkts').textContent=allTkts.length;
+    document.getElementById('ad-early').textContent=users.filter(u=>u.is_early).length;
+    const map={};
+    allTkts.forEach(t=>{map[t.ig]=(map[t.ig]||0)+1;});
+    const ul=document.getElementById('ad-users');
+    if (!users.length){
+      ul.innerHTML='<div style="color:#555;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;padding:8px 0;">まだ来場者がいません</div>';
+      return;
+    }
+    ul.innerHTML=users.sort((a,b)=>(map[b.ig]||0)-(map[a.ig]||0)).map(u=>`
+      <div class="user-row">
+        <div>
+          <div>@${u.ig}</div>
+          <div class="u-sub">${new Date(u.arrived_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})} 入場${u.is_early?' · 早期':''}</div>
+        </div>
+        <div class="gold" style="font-weight:700;font-size:14px;">${map[u.ig]||0}枚</div>
+      </div>`).join('');
+  } catch(e){toast('ad-toast','取得エラー: '+e.message);}
+}
+
+async function giveChampagne() {
+  const ig = document.getElementById('give-ig').value.trim().replace(/^@/,'');
+  const err = document.getElementById('give-err');
+  err.textContent='';
+  if (!ig){err.textContent='アカウント名を入力してください';return;}
+  try {
+    const user = await getUser(ig);
+    if (!user){err.textContent='@'+ig+' は未入場です';return;}
+    await insertTicket(ig,'シャンパン');
+    await insertTicket(ig,'シャンパン');
+    toast('ad-toast','@'+ig+' に +2枚付与！',true);
+    document.getElementById('give-ig').value='';
+    await refreshAdmin();
+  } catch(e){err.textContent='エラー: '+e.message;}
+}
+
+async function runLottery() {
+  try {
+    const allTkts = await getAllTickets();
+    if (!allTkts.length){toast('ad-toast','チケットがまだありません');return;}
+    const disp=document.getElementById('lot-num');
+    const winEl=document.getElementById('lot-winner');
+    let count=0;
+    const iv=setInterval(()=>{
+      const r=allTkts[Math.floor(Math.random()*allTkts.length)];
+      disp.textContent='#'+r.ticket_num;
+      count++;
+      if(count>24){
+        clearInterval(iv);
+        const w=allTkts[Math.floor(Math.random()*allTkts.length)];
+        lotteryWinner=w;
+        disp.textContent='#'+w.ticket_num;
+        winEl.className='lot-winner';
+        winEl.textContent='当選者: @'+w.ig+' — Tシャツをプレゼント！';
+        toast('ad-toast','当選: @'+w.ig,true);
+      }
+    },80);
+  } catch(e){toast('ad-toast','エラー: '+e.message);}
+}
+
+function doLogout(){currentUser=null;showScreen('login-screen');}
+function doAdminLogout(){showScreen('login-screen');}
+
+(async()=>{
+  const overlay=document.getElementById('loading-overlay');
+  const txt=document.getElementById('load-txt');
+  try {
+    await sb('GET','users',null,'limit=1');
+    overlay.style.display='none';
+    showScreen('login-screen');
+  } catch(e){
+    txt.textContent='接続エラー: '+e.message;
+    txt.style.color='#cc2200';
+  }
+})();
+
+setInterval(()=>{
+  if(currentUser && document.getElementById('user-screen').classList.contains('active')) checkHourly();
+},60000);
+</script>
+</body>
+</html>
