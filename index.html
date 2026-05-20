@@ -717,20 +717,6 @@ function switchTab(tab) {
   });
 }
 
-async function renderRankingHome() {
-  const allTkts = await getAllTickets();
-  const map = {};
-  allTkts.forEach(t => { map[t.ig] = (map[t.ig]||0)+1; });
-  const sorted = Object.entries(map).sort((a,b) => b[1]-a[1]);
-  const prizes = ['ライブペイント作品','オリジナルTシャツ','限定グッズ'];
-  const prizeClass = ['prize-1','prize-2','prize-3'];
-  const rankClass = ['rank-1','rank-2','rank-3'];
-  const container = document.getElementById('ranking-list-home');
-  if(!container) return;
-  if(!sorted.length) {
-    container.innerHTML = '<div style="color:#888;font-size:10px;font-family:'Noto Sans JP',sans-serif;">まだランキングデータがありません</div>';
-    return;
-  }
   container.innerHTML = sorted.map(([ig,cnt],i) => {
     const isMe = ig === currentUser?.ig;
     const rank = i+1;
@@ -766,6 +752,40 @@ function checkUrlQr(){
   overlay.style.display='none';
   showScreen('login-screen');
 })();
+
+
+async function renderRankingHome() {
+  const allTkts = await getAllTickets();
+  const map = {};
+  allTkts.forEach(function(t){ map[t.ig] = (map[t.ig]||0)+1; });
+  const sorted = Object.entries(map).sort(function(a,b){ return b[1]-a[1]; });
+  const prizes = ['ライブペイント作品','オリジナルTシャツ','限定グッズ'];
+  const prizeClass = ['prize-1','prize-2','prize-3'];
+  const rankClass = ['rank-1','rank-2','rank-3'];
+  const container = document.getElementById('ranking-list-home');
+  if(!container) return;
+  if(!sorted.length) {
+    container.innerHTML = '<div style="color:#888;font-size:10px;font-family:'Noto Sans JP',sans-serif;">まだランキングデータがありません</div>';
+    return;
+  }
+  var rows = '';
+  for(var i=0; i<sorted.length; i++) {
+    var ig = sorted[i][0];
+    var cnt = sorted[i][1];
+    var isMe = currentUser && ig === currentUser.ig;
+    var rank = i+1;
+    var medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
+    var prizeHtml = rank<=3 ? '<div class="rank-prize"><span class="prize-badge '+prizeClass[rank-1]+'">'+rank+'位</span> '+prizes[rank-1]+'</div>' : '';
+    rows += '<div class="rank-row" style="'+(isMe?'border-color:#1a1aff;background:#0a0a1a;':'')+'">'
+      + '<div class="rank-num '+(rank<=3?rankClass[rank-1]:'')+'">'+medal+'</div>'
+      + '<div class="rank-info">'
+      + '<div class="rank-ig">@'+ig+(isMe?' ← YOU':'')+'</div>'
+      + '<div class="rank-cnt">'+cnt+'枚</div>'
+      + prizeHtml
+      + '</div></div>';
+  }
+  container.innerHTML = rows;
+}
 
 setInterval(()=>{
   if(currentUser&&document.getElementById('user-screen').classList.contains('active'))checkHourly();
