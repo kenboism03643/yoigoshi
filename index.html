@@ -8,8 +8,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#1a1814;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;font-family:'Shippori Mincho','Space Mono',serif;font-weight:700;}
-#app{width:100%;max-width:480px;background:#201e1a;color:#f5f2eb;min-height:100vh;position:relative;display:flex;flex-direction:column;font-family:'Shippori Mincho','Space Mono',serif;font-weight:700;}
+body{background:#1a1814;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;font-family:'Shippori Mincho','Space Mono',serif;}
+#app{width:100%;max-width:480px;background:#201e1a;color:#f5f2eb;min-height:100vh;display:flex;flex-direction:column;}
 .screen{display:none;flex:1;flex-direction:column;}
 .screen.active{display:flex;}
 .hdr{background:#201e1a;border-bottom:2px solid #1a1aff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
@@ -17,41 +17,38 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
 .hdr-sub{font-size:8px;color:#5555ff;letter-spacing:.15em;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .lbl{font-size:9px;letter-spacing:.15em;color:#1a1aff;margin-bottom:5px;display:block;font-family:'Space Mono',monospace;}
-.inp{width:100%;background:#2a2620;border:1.5px solid #3a3530;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:14px;padding:12px 13px;outline:none;transition:border-color .2s;margin-bottom:14px;-webkit-appearance:none;}
+.inp{width:100%;background:#2a2620;border:1.5px solid #3a3530;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:14px;padding:12px 13px;outline:none;margin-bottom:14px;-webkit-appearance:none;}
 .inp:focus{border-color:#1a1aff;}
 .inp::placeholder{color:#555;}
-.btn-primary{width:100%;background:#1a1aff;color:#f5f2eb;border:none;border-radius:6px;font-family:'Shippori Mincho',serif;font-size:13px;font-weight:700;letter-spacing:.08em;padding:14px;cursor:pointer;transition:opacity .2s;}
-.btn-primary:active{opacity:.75;}
+.btn-primary{width:100%;background:#1a1aff;color:#f5f2eb;border:none;border-radius:6px;font-family:'Shippori Mincho',serif;font-size:14px;font-weight:700;padding:14px;cursor:pointer;}
 .btn-primary:disabled{opacity:.4;}
+.err{color:#cc2200;font-size:10px;font-family:'Noto Sans JP',sans-serif;margin-bottom:10px;min-height:14px;}
 .sec-title{font-size:8px;letter-spacing:.2em;color:#888;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #3a3530;font-family:'Space Mono',monospace;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 16px 0;}
-.stat{background:#2a2620;border:1px solid #3a3530;border-radius:8px;padding:12px;}
-.stat-lbl{font-size:7px;letter-spacing:.15em;color:#888;}
+.stat{background:#2a2620;border:1px solid #3a3530;border-radius:8px;padding:13px;}
+.stat-lbl{font-size:7px;letter-spacing:.15em;color:#888;font-family:'Space Mono',monospace;}
 .stat-val{font-size:22px;font-weight:700;margin-top:3px;font-family:'Space Mono',monospace;}
 .gold{color:#c8a84b;}
 .blue{color:#1a1aff;}
-.red{color:#cc2200;}
-.green{color:#00cc66;}
 .tkt-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
 .tkt{background:#2a2620;border:1px solid #3a3530;border-radius:5px;padding:7px 3px;text-align:center;}
-.tkt-num{font-size:9px;font-weight:700;}
-.tkt-src{font-size:6px;color:#555;margin-top:1px;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.btn-act{background:#2a2620;border:1.5px solid #2a2a2a;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:11px;padding:12px 14px;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s;width:100%;}
-.btn-act:active{border-color:#1a1aff;background:#0a0a1a;}
-.spot{background:#2a2620;border:1.5px solid #2a2a2a;border-radius:7px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:border-color .2s;margin-bottom:8px;}
-.spot:active{border-color:#1a1aff;}
+.tkt-num{font-size:9px;font-weight:700;font-family:'Space Mono',monospace;}
+.tkt-src{font-size:6px;color:#666;margin-top:1px;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rule-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #2a2620;}
+.rule-row:last-child{border-bottom:none;}
+.rule-emoji{font-size:16px;width:24px;flex-shrink:0;}
+.rule-label{flex:1;font-size:13px;color:#ccc;font-family:'Noto Sans JP',sans-serif;}
+.rule-val{color:#c8a84b;font-weight:700;font-family:'Space Mono',monospace;font-size:13px;white-space:nowrap;}
+.spot{background:#2a2620;border:1.5px solid #3a3530;border-radius:7px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px;}
 .spot.done{border-color:#c8a84b;background:#1a1500;}
 .spot-name{font-size:11px;font-weight:700;}
 .spot-sub{font-size:8px;color:#666;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
 .badge{font-size:8px;padding:3px 8px;border-radius:4px;font-weight:700;white-space:nowrap;}
-.badge.pending{background:#222;color:#666;border:1px solid #333;}
+.badge.pending{background:#333;color:#666;border:1px solid #444;}
 .badge.done{background:#1a1500;color:#c8a84b;border:1px solid #c8a84b;}
-.nav{display:flex;background:#1a1814;border-top:1px solid #1a1a1a;flex-shrink:0;padding-bottom:env(safe-area-inset-bottom);}
-.nav-btn{flex:1;padding:18px 4px 16px;font-family:'Shippori Mincho',serif;font-size:13px;letter-spacing:.05em;color:#777;background:transparent;border:none;cursor:pointer;transition:color .2s;text-align:center;line-height:1.6;}
-.nav-btn.active{color:#1a1aff;}
-.btn-back{background:transparent;border:1.5px solid #3a3530;border-radius:6px;color:#888;font-family:'Space Mono',monospace;font-size:10px;padding:10px 14px;cursor:pointer;width:100%;}
-.user-row{background:#2a2620;border:1px solid #3a3530;border-radius:6px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;font-size:11px;margin-bottom:6px;}
-.u-sub{font-size:8px;color:#555;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
+.tab-btn-bar{display:flex;gap:8px;margin-bottom:14px;}
+.tab-btn{flex:1;background:#2a2620;border:1.5px solid #3a3530;border-radius:6px;color:#666;font-family:'Space Mono',monospace;font-size:9px;padding:8px;cursor:pointer;text-align:center;}
+.tab-btn.active{border-color:#1a1aff;color:#1a1aff;background:#0a0a1a;}
 .rank-row{background:#2a2620;border:1px solid #3a3530;border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
 .rank-num{font-size:20px;font-weight:700;width:32px;text-align:center;flex-shrink:0;font-family:'Space Mono',monospace;}
 .rank-1{color:#ffd700;}
@@ -59,42 +56,37 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
 .rank-3{color:#cd7f32;}
 .rank-info{flex:1;}
 .rank-ig{font-size:12px;font-weight:700;}
-.rank-cnt{font-size:10px;color:#c8a84b;margin-top:2px;}
-.rank-prize{font-size:8px;color:#555;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
+.rank-cnt{font-size:10px;color:#c8a84b;margin-top:2px;font-family:'Space Mono',monospace;}
+.rank-prize{font-size:8px;color:#888;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
+.prize-badge{display:inline-block;font-size:8px;padding:2px 6px;border-radius:3px;font-weight:700;margin-right:4px;}
+.prize-1{background:#ffd700;color:#0a0a0a;}
+.prize-2{background:#c0c0c0;color:#0a0a0a;}
+.prize-3{background:#cd7f32;color:#0a0a0a;}
+.user-row{background:#2a2620;border:1px solid #3a3530;border-radius:6px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between;font-size:11px;margin-bottom:6px;}
+.u-sub{font-size:8px;color:#666;margin-top:2px;font-family:'Noto Sans JP',sans-serif;}
 .give-row{display:flex;gap:8px;align-items:flex-end;}
-.give-inp{flex:1;background:#201e1a;border:1.5px solid #3a3530;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:12px;padding:10px 11px;outline:none;}
+.give-inp{flex:1;background:#1a1814;border:1.5px solid #3a3530;border-radius:6px;color:#f5f2eb;font-family:'Space Mono',monospace;font-size:12px;padding:10px 11px;outline:none;}
 .give-inp:focus{border-color:#c8a84b;}
-.btn-gold{background:#c8a84b;color:#0a0a0a;border:none;border-radius:6px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:10px 14px;cursor:pointer;white-space:nowrap;}
-.toast-bar{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:999;pointer-events:none;}
+.btn-gold{background:#c8a84b;color:#0a0a0a;border:none;border-radius:6px;font-family:'Shippori Mincho',serif;font-size:12px;font-weight:700;padding:10px 14px;cursor:pointer;white-space:nowrap;}
+.toast-bar{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:999;pointer-events:none;}
 .toast-msg{font-size:12px;padding:10px 20px;border-radius:20px;background:#1a1aff;color:#f5f2eb;opacity:0;transition:opacity .3s;text-align:center;white-space:nowrap;font-family:'Noto Sans JP',sans-serif;}
 .toast-msg.gold{background:#c8a84b;color:#0a0a0a;}
 .toast-msg.show{opacity:1;}
 .link{color:#1a1aff;cursor:pointer;text-decoration:underline;font-size:10px;text-align:center;display:block;margin-top:12px;font-family:'Noto Sans JP',sans-serif;}
-.err{color:#cc2200;font-size:10px;font-family:'Noto Sans JP',sans-serif;margin-bottom:10px;min-height:14px;}
-#loading-overlay{position:fixed;inset:0;background:#201e1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:16px;}
-.load-txt{font-size:11px;letter-spacing:.2em;color:#1a1aff;font-family:'Shippori Mincho',serif;}
 .qr-container{background:#fff;padding:12px;border-radius:8px;display:inline-block;}
-.prize-badge{display:inline-block;font-size:8px;padding:2px 8px;border-radius:3px;font-weight:700;margin-left:6px;}
-.prize-1{background:#ffd700;color:#0a0a0a;}
-.prize-2{background:#c0c0c0;color:#0a0a0a;}
-.prize-3{background:#cd7f32;color:#0a0a0a;}
-.tab-bar{display:flex;gap:8px;margin-bottom:14px;}
-.tab-btn{flex:1;background:#2a2620;border:1.5px solid #222;border-radius:6px;color:#555;font-family:'Space Mono',monospace;font-size:9px;padding:8px;cursor:pointer;text-align:center;transition:all .2s;}
-.tab-btn.active{border-color:#1a1aff;color:#1a1aff;background:#0a0a1a;}
-
-.rule-row{display:flex;align-items:center;gap:8px;font-size:13px;font-family:'Noto Sans JP',sans-serif;}
-.rule-label{flex:1;color:#ccc;}
-.rule-val{color:#c8a84b;font-weight:700;font-family:'Space Mono',monospace;font-size:13px;white-space:nowrap;}
-.tab-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.interaction-row{background:#2a2620;border:1px solid #3a3530;border-radius:6px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.int-ig{font-size:11px;font-weight:700;}
-.int-time{font-size:8px;color:#555;font-family:'Noto Sans JP',sans-serif;}
+.nav{display:flex;background:#161310;border-top:1px solid #3a3530;flex-shrink:0;}
+.nav-btn{flex:1;padding:16px 4px 14px;font-family:'Shippori Mincho',serif;font-size:13px;color:#666;background:transparent;border:none;cursor:pointer;text-align:center;line-height:1.6;}
+.nav-btn.active{color:#1a1aff;}
+.logout-btn{width:100%;background:transparent;border:none;border-top:1px solid #3a3530;color:#555;font-family:'Shippori Mincho',serif;font-size:13px;padding:14px;cursor:pointer;letter-spacing:.1em;flex-shrink:0;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+#loading-overlay{position:fixed;inset:0;background:#201e1a;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
+.load-txt{font-size:12px;letter-spacing:.2em;color:#1a1aff;font-family:'Shippori Mincho',serif;}
 </style>
 </head>
 <body>
-
 <div id="loading-overlay">
-  <svg width="48" height="48" viewBox="0 0 80 80">
+  <svg width="60" height="60" viewBox="0 0 80 80">
     <circle cx="40" cy="40" r="38" fill="#1a1aff" opacity=".15"/>
     <ellipse cx="40" cy="44" rx="22" ry="18" fill="#1a1aff"/>
     <ellipse cx="40" cy="34" rx="16" ry="14" fill="#1a1aff"/>
@@ -104,7 +96,7 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
     <circle cx="35" cy="31" r="2" fill="#0a0a0a"/><circle cx="47" cy="31" r="2" fill="#0a0a0a"/>
     <ellipse cx="40" cy="38" rx="4" ry="2.5" fill="#c8a84b"/>
   </svg>
-  <div class="load-txt" id="load-txt">接続中 ...</div>
+  <div class="load-txt">接続中 ...</div>
 </div>
 
 <div id="app">
@@ -113,21 +105,10 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
 <div id="login-screen" class="screen">
   <div class="scroll">
     <div style="padding:32px 24px 16px;text-align:center;">
-      <svg width="68" height="68" viewBox="0 0 80 80" style="margin:0 auto 12px;display:block;">
-        <circle cx="40" cy="40" r="38" fill="#1a1aff" opacity=".15"/>
-        <ellipse cx="40" cy="44" rx="22" ry="18" fill="#1a1aff"/>
-        <ellipse cx="40" cy="34" rx="16" ry="14" fill="#1a1aff"/>
-        <ellipse cx="28" cy="22" rx="7" ry="9" fill="#1a1aff" transform="rotate(-15 28 22)"/>
-        <ellipse cx="52" cy="22" rx="7" ry="9" fill="#1a1aff" transform="rotate(15 52 22)"/>
-        <circle cx="34" cy="32" r="4" fill="#f5f2eb"/><circle cx="46" cy="32" r="4" fill="#f5f2eb"/>
-        <circle cx="35" cy="31" r="2" fill="#0a0a0a"/><circle cx="47" cy="31" r="2" fill="#0a0a0a"/>
-        <ellipse cx="40" cy="38" rx="4" ry="2.5" fill="#c8a84b"/>
-        <ellipse cx="40" cy="58" rx="14" ry="5" fill="#1545cc"/>
-      </svg>
-      <div style="font-size:11px;letter-spacing:.4em;color:#aaa;margin-bottom:6px;font-family:'Space Mono',monospace;">— 粋の、発信地。—</div>
-      <div style="font-size:46px;font-weight:900;letter-spacing:.06em;font-family:'Paytone One',sans-serif;">YOIGOSHI</div>
+      <div style="font-size:11px;letter-spacing:.4em;color:#aaa;margin-bottom:8px;font-family:'Space Mono',monospace;">— 粋の、発信地。—</div>
+      <div style="font-size:44px;font-weight:400;letter-spacing:.06em;font-family:'Paytone One',sans-serif;">YOIGOSHI</div>
       <div style="font-size:10px;color:#555;margin-top:4px;letter-spacing:.3em;font-family:'Space Mono',monospace;">vol.1</div>
-      <div style="font-size:22px;color:#c8a84b;margin-top:2px;font-family:'Shippori Mincho',serif;font-weight:800;letter-spacing:.3em;">〜寄初〜</div>
+      <div style="font-size:26px;color:#c8a84b;margin-top:2px;font-family:'Shippori Mincho',serif;font-weight:800;letter-spacing:.3em;">〜寄初〜</div>
       <div style="font-size:10px;color:#c8a84b;margin-top:6px;letter-spacing:.25em;font-family:'Space Mono',monospace;">2025.06.12 FRI</div>
       <div style="font-size:10px;color:#555;margin-top:2px;font-family:'Shippori Mincho',serif;letter-spacing:.15em;">渋谷 UNDERBAR</div>
     </div>
@@ -138,7 +119,7 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
       <input class="inp" id="pw-inp" placeholder="エントランスでお伝えします" type="password"/>
       <div class="err" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">入場する</button>
-      <div style="font-size:9px;color:#444;text-align:center;margin-top:10px;font-family:'Shippori Mincho',serif;letter-spacing:.1em;">パスワードはエントランスでお伝えします</div>
+      <div style="font-size:9px;color:#444;text-align:center;margin-top:10px;font-family:'Noto Sans JP',sans-serif;">パスワードはエントランスでお伝えします</div>
       <span class="link" onclick="showScreen('admin-login-screen')">主催者ログイン →</span>
     </div>
   </div>
@@ -150,7 +131,7 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
     <div style="padding:40px 24px 20px;text-align:center;">
       <div style="font-size:40px;margin-bottom:12px;">⚙️</div>
       <div style="font-size:18px;font-weight:700;letter-spacing:.1em;">ADMIN</div>
-      <div style="font-size:10px;color:#555;margin-top:4px;font-family:'Noto Sans JP',sans-serif;">YOIGOSHI 管理画面</div>
+      <div style="font-size:10px;color:#666;margin-top:4px;font-family:'Noto Sans JP',sans-serif;">YOIGOSHI 管理画面</div>
     </div>
     <div style="padding:0 24px 24px;">
       <label class="lbl">ADMIN PASSWORD</label>
@@ -162,7 +143,7 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
   </div>
 </div>
 
-<!-- USER MAIN -->
+<!-- USER SCREEN -->
 <div id="user-screen" class="screen">
   <div class="hdr">
     <div>
@@ -184,60 +165,56 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
       <div class="stat"><div class="stat-lbl">MY TICKETS</div><div class="stat-val gold" id="u-tkt-cnt">0</div></div>
       <div class="stat"><div class="stat-lbl">MY RANK</div><div class="stat-val blue" id="u-rank">-</div></div>
     </div>
-    <div style="padding:14px 16px 8px;">
-      <div class="sec-title">MY TICKETS</div>
-      <div class="tkt-grid" id="tkt-grid">
-        <div style="color:#555;font-size:10px;font-family:'Noto Sans JP',sans-serif;grid-column:span 5;padding:4px 0;">まだチケットがありません</div>
-      </div>
-    </div>
-    <div style="padding:0 16px 12px;display:flex;flex-direction:column;gap:8px;">
-      <button class="btn-act" onclick="switchTab('qr');renderQr();">
-        <span>🔍 QRスキャン <span style="color:#555;font-size:9px;">会場を探索してチケットGET</span></span>
-        <span style="color:#1a1aff;font-size:16px;">→</span>
-      </button>
-      <button class="btn-act" onclick="showScreen('insta-screen');renderMyQr();">
-        <span>📸 インスタ交流 <span style="color:#555;font-size:9px;">QR交換でチケットGET</span></span>
-        <span style="color:#1a1aff;font-size:16px;">→</span>
-      </button>
-      <button class="btn-act" onclick="switchTab('ranking');renderRankingHome();">
-        <span>🏆 ランキング <span style="color:#555;font-size:9px;">現在の順位を確認</span></span>
-        <span style="color:#1a1aff;font-size:16px;">→</span>
-      </button>
-    </div>
-    <div style="padding:0 16px 20px;">
+    <!-- HOME TAB -->
+    <div id="tab-home" class="tab-content active" style="padding:16px;">
       <div class="sec-title">TICKET RULES</div>
-      <div style="background:#2a2620;border:1px solid #2a2620;border-radius:8px;padding:14px;font-size:9px;color:#888;line-height:2.2;font-family:'Noto Sans JP',sans-serif;">
-        🎫 入場時 +1枚<br>
-        ⚡ 19:30までに入場 +1枚<br>
-        ⏱ 滞在30分ごと +1枚（自動）<br>
-        🔍 会場内QRスキャン +1枚（各1回）<br>
-        🎤 主催者QRスキャン +1枚（各1回）<br>
-        📸 インスタ相互スキャン +1枚ずつ<br>
-        🍾 シャンパン注文 +2枚（スタッフ付与）<br>
-        <br>
-        <span style="color:#c8a84b;font-size:10px;font-weight:700;">枚数順で景品プレゼント！<br>1位→ライブペイント作品 / 2位→Tシャツ / 3位→限定グッズ</span>
+      <div style="background:#2a2620;border:1px solid #3a3530;border-radius:10px;padding:16px;margin-bottom:16px;">
+        <div class="rule-row"><span class="rule-emoji">🎫</span><span class="rule-label">入場時</span><span class="rule-val">+1枚</span></div>
+        <div class="rule-row"><span class="rule-emoji">⚡</span><span class="rule-label">19:30までに入場</span><span class="rule-val">+1枚</span></div>
+        <div class="rule-row"><span class="rule-emoji">⏱</span><span class="rule-label">滞在30分ごと（自動）</span><span class="rule-val">+1枚</span></div>
+        <div class="rule-row"><span class="rule-emoji">🔍</span><span class="rule-label">会場内QRスキャン（各1回）</span><span class="rule-val">+1枚</span></div>
+        <div class="rule-row"><span class="rule-emoji">🎤</span><span class="rule-label">主催者QRスキャン（各1回）</span><span class="rule-val">+1枚</span></div>
+        <div class="rule-row"><span class="rule-emoji">📸</span><span class="rule-label">インスタ相互スキャン</span><span class="rule-val">+1枚ずつ</span></div>
+        <div class="rule-row"><span class="rule-emoji">🍾</span><span class="rule-label">シャンパン注文</span><span class="rule-val">+2枚</span></div>
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid #3a3530;">
+          <div style="font-size:13px;color:#c8a84b;font-weight:700;font-family:'Shippori Mincho',serif;line-height:2;">
+            🏆 枚数順で景品プレゼント！<br>
+            1位 → ライブペイント完成作品<br>
+            2位 → オリジナルTシャツ<br>
+            3位 → YOIGOSHI限定グッズ
+          </div>
+        </div>
       </div>
+    </div>
+    <!-- TICKET TAB -->
+    <div id="tab-ticket" class="tab-content" style="padding:16px;">
+      <div class="sec-title">MY TICKET NUMBERS</div>
+      <div class="tkt-grid" id="tkt-grid">
+        <div style="color:#888;font-size:11px;font-family:'Noto Sans JP',sans-serif;grid-column:span 5;padding:8px 0;">まだチケットがありません</div>
+      </div>
+    </div>
+    <!-- QR TAB -->
+    <div id="tab-qr" class="tab-content" style="padding:16px;">
+      <div style="font-size:11px;color:#888;margin-bottom:14px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">会場に隠されたQRコードを探せ！各スポット1回限り。</div>
+      <div id="qr-list"></div>
+    </div>
+    <!-- RANKING TAB -->
+    <div id="tab-ranking" class="tab-content" style="padding:16px;">
+      <div style="background:#2a2620;border:1px solid #3a3530;border-radius:8px;padding:12px;margin-bottom:14px;font-size:9px;color:#888;font-family:'Noto Sans JP',sans-serif;line-height:1.8;">
+        <span class="prize-badge prize-1">1位</span>ライブペイント完成作品　
+        <span class="prize-badge prize-2">2位</span>オリジナルTシャツ　
+        <span class="prize-badge prize-3">3位</span>YOIGOSHI限定グッズ
+      </div>
+      <div id="ranking-list"></div>
     </div>
   </div>
   <div class="nav">
-    <button class="nav-btn active" onclick="showUserTab('user-screen')">🎫 チケット</button>
-    <button class="nav-btn" onclick="showScreen('insta-screen');renderMyQr();">📸 交流</button>
-    <button class="nav-btn" onclick="switchTab('ranking');renderRankingHome();">🏆 順位</button>
-    <button class="nav-btn" onclick="doLogout()">← 退場</button>
+    <button class="nav-btn active" id="nav-home" onclick="switchTab('home')">🏠<br>ホーム</button>
+    <button class="nav-btn" id="nav-ticket" onclick="switchTab('ticket')">🎫<br>チケット</button>
+    <button class="nav-btn" id="nav-qr" onclick="switchTab('qr');renderQr();">🔍<br>QR</button>
+    <button class="nav-btn" id="nav-ranking" onclick="switchTab('ranking');renderRanking();">🏆<br>順位</button>
   </div>
-</div>
-
-<!-- QR SCAN -->
-<div id="qr-screen" class="screen">
-  <div class="hdr">
-    <div><div class="hdr-title">QR SCAN</div><div class="hdr-sub">会場を探索してチケットをGET</div></div>
-  </div>
-  <div class="scroll" style="padding:16px;">
-    <div style="font-size:10px;color:#888;margin-bottom:14px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">会場に隠されたQRコードを探せ！各スポット1回限り。主催者3人のQRも見つけよう。</div>
-    <div id="qr-list"></div>
-    <div style="height:12px;"></div>
-    <button class="btn-back" onclick="showScreen('user-screen');refreshUser();">← 戻る</button>
-  </div>
+  <button class="logout-btn" onclick="doLogout()">← 退場</button>
 </div>
 
 <!-- INSTA EXCHANGE -->
@@ -246,20 +223,18 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
     <div><div class="hdr-title">📸 INSTA EXCHANGE</div><div class="hdr-sub">QR交換でお互い+1枚</div></div>
   </div>
   <div class="scroll" style="padding:16px;">
-    <div class="tab-bar">
-      <button class="tab-btn active" id="tab-myqr" onclick="switchInstaTab('myqr')">MY QR</button>
-      <button class="tab-btn" id="tab-scan" onclick="switchInstaTab('scan')">SCAN</button>
-      <button class="tab-btn" id="tab-history" onclick="switchInstaTab('history');loadInteractions();">履歴</button>
+    <div class="tab-btn-bar">
+      <button class="tab-btn active" id="itab-myqr" onclick="switchInstaTab('myqr')">MY QR</button>
+      <button class="tab-btn" id="itab-scan" onclick="switchInstaTab('scan')">SCAN</button>
+      <button class="tab-btn" id="itab-history" onclick="switchInstaTab('history');loadInteractions();">履歴</button>
     </div>
-    <!-- MY QR -->
     <div id="insta-myqr">
-      <div style="text-align:center;padding:12px 0 8px;">
+      <div style="text-align:center;padding:12px 0;">
         <div style="font-size:10px;color:#888;margin-bottom:14px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">このQRを相手に見せてスキャンしてもらおう。<br>お互いスキャンし合うとどちらも+1枚！</div>
         <div class="qr-container" id="my-qr-code" style="margin:0 auto;display:inline-block;"></div>
-        <div style="margin-top:10px;font-size:11px;color:#555;" id="my-qr-label">@username</div>
+        <div style="margin-top:10px;font-size:11px;color:#666;" id="my-qr-label">@username</div>
       </div>
     </div>
-    <!-- SCAN -->
     <div id="insta-scan" style="display:none;">
       <div style="font-size:10px;color:#888;margin-bottom:14px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">相手のInstagram IDを入力してスキャン！</div>
       <label class="lbl">相手のINSTAGRAM ID</label>
@@ -267,29 +242,11 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
       <div class="err" id="scan-err"></div>
       <button class="btn-primary" onclick="doInstaExchange()">スキャンする +1枚</button>
     </div>
-    <!-- HISTORY -->
     <div id="insta-history" style="display:none;">
-      <div id="interaction-list"><div style="color:#555;font-size:10px;font-family:'Noto Sans JP',sans-serif;">読み込み中...</div></div>
+      <div id="interaction-list"><div style="color:#888;font-size:10px;font-family:'Noto Sans JP',sans-serif;">読み込み中...</div></div>
     </div>
     <div style="height:12px;"></div>
-    <button class="btn-back" onclick="showScreen('user-screen');refreshUser();">← 戻る</button>
-  </div>
-</div>
-
-<!-- RANKING -->
-<div id="ranking-screen" class="screen">
-  <div class="hdr">
-    <div><div class="hdr-title">🏆 RANKING</div><div class="hdr-sub">チケット獲得数ランキング</div></div>
-  </div>
-  <div class="scroll" style="padding:16px;">
-    <div style="background:#2a2620;border:1px solid #2a2620;border-radius:8px;padding:12px;margin-bottom:14px;font-size:9px;color:#888;font-family:'Noto Sans JP',sans-serif;line-height:1.8;">
-      <span class="prize-badge prize-1">1位</span> ライブペイント完成作品&nbsp;&nbsp;
-      <span class="prize-badge prize-2">2位</span> オリジナルTシャツ&nbsp;&nbsp;
-      <span class="prize-badge prize-3">3位</span> YOIGOSHI限定グッズ
-    </div>
-    <div id="ranking-list"><div style="color:#555;font-size:10px;font-family:'Noto Sans JP',sans-serif;">読み込み中...</div></div>
-    <div style="height:12px;"></div>
-    <button class="btn-back" onclick="showScreen('user-screen');">← 戻る</button>
+    <button onclick="showScreen('user-screen');refreshUser();" style="background:transparent;border:1.5px solid #3a3530;border-radius:6px;color:#888;font-family:'Space Mono',monospace;font-size:10px;padding:10px;cursor:pointer;width:100%;">← 戻る</button>
   </div>
 </div>
 
@@ -297,23 +254,20 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
 <div id="admin-screen" class="screen">
   <div class="hdr">
     <div><div class="hdr-title">⚙️ ADMIN</div><div class="hdr-sub">YOIGOSHI 管理画面</div></div>
-    <button onclick="doAdminLogout()" style="background:transparent;border:1px solid #333;border-radius:4px;color:#888;font-family:'Space Mono',monospace;font-size:9px;padding:5px 9px;cursor:pointer;">ログアウト</button>
+    <button onclick="doAdminLogout()" style="background:transparent;border:1px solid #444;border-radius:4px;color:#888;font-family:'Space Mono',monospace;font-size:9px;padding:5px 9px;cursor:pointer;">ログアウト</button>
   </div>
   <div class="scroll" style="padding:16px;">
-    <div style="background:#1a0000;border:1px solid #cc2200;border-radius:7px;padding:10px 13px;margin-bottom:16px;font-size:10px;color:#cc2200;letter-spacing:.08em;">⚠ 主催者専用 — 関係者以外アクセス禁止</div>
+    <div style="background:#1a0000;border:1px solid #cc2200;border-radius:7px;padding:10px 13px;margin-bottom:16px;font-size:10px;color:#cc2200;">⚠ 主催者専用 — 関係者以外アクセス禁止</div>
     <div class="sec-title">LIVE STATS</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
       <div class="stat" style="text-align:center;"><div class="stat-val blue" id="ad-visitors">0</div><div class="stat-lbl" style="margin-top:3px;">来場者数</div></div>
       <div class="stat" style="text-align:center;"><div class="stat-val gold" id="ad-tkts">0</div><div class="stat-lbl" style="margin-top:3px;">総チケット</div></div>
-      <div class="stat" style="text-align:center;"><div class="stat-val red" id="ad-early">0</div><div class="stat-lbl" style="margin-top:3px;">早期入場</div></div>
+      <div class="stat" style="text-align:center;"><div class="stat-val" style="color:#cc2200;" id="ad-early">0</div><div class="stat-lbl" style="margin-top:3px;">早期入場</div></div>
     </div>
     <div class="sec-title">シャンパンチケット付与</div>
     <div style="background:#2a2620;border:1px solid #3a3530;border-radius:8px;padding:14px;margin-bottom:16px;">
       <div class="give-row">
-        <div style="flex:1;">
-          <label class="lbl">INSTAGRAM ID</label>
-          <input class="give-inp" id="give-ig" placeholder="@username" type="text" autocapitalize="none"/>
-        </div>
+        <div style="flex:1;"><label class="lbl">INSTAGRAM ID</label><input class="give-inp" id="give-ig" placeholder="@username" type="text" autocapitalize="none"/></div>
         <button class="btn-gold" onclick="giveChampagne()">+2枚</button>
       </div>
       <div class="err" id="give-err" style="margin-top:8px;margin-bottom:0;"></div>
@@ -326,7 +280,6 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
 </div>
 
 </div>
-
 <div class="toast-bar"><div class="toast-msg" id="toast"></div></div>
 
 <script>
@@ -334,463 +287,366 @@ const SUPA_URL = 'https://wyvgdaxtmuynouzupdmw.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5dmdkYXh0bXV5bm91enVwZG13Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNjU3MjcsImV4cCI6MjA5NDY0MTcyN30.2_tt0_Iy2-AeaFsU4_wYryXZKdoAEaSmlx0aQiYZ_Ag';
 const EVENT_PW = '20260612';
 const ADMIN_PW = 'admin1612';
-const EARLY_CUTOFF_HOUR = 19;
-const EARLY_CUTOFF_MIN = 30;
+const EARLY_H = 19, EARLY_M = 30;
 const HALF_HOUR_MS = 30 * 60 * 1000;
 
-// 主催者3人の固有QR
 const HOST_SPOTS = [
   {id:'host_ken', name:'KEN', sub:'主催者 KENのQR', emoji:'🎨'},
   {id:'host_yu', name:'YU-CHAN', sub:'主催者 ゆうちゃんのQR', emoji:'👗'},
   {id:'host_yutaro', name:'YUTARO', sub:'主催者 ゆうたろうのQR', emoji:'🎵'},
 ];
+const VENUE_SPOTS = [];
+for(var i=1;i<=15;i++){
+  var n = i < 10 ? '0'+i : ''+i;
+  VENUE_SPOTS.push({id:'spot_'+n, name:'SPOT '+n, sub:'会場内QRコード', emoji:'📍'});
+}
+const ALL_SPOTS = HOST_SPOTS.concat(VENUE_SPOTS);
 
-// 会場内QRスポット15種
-const VENUE_SPOTS = Array.from({length:15},(_,i)=>{
-  const n = String(i+1).padStart(2,'0');
-  return {id:`spot_${n}`, name:`SPOT ${n}`, sub:'会場内QRコード', emoji:'📍'};
-});
+var currentUser = null;
+var hdrs = {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
 
-const ALL_SPOTS = [...HOST_SPOTS, ...VENUE_SPOTS];
-
-let currentUser = null;
-const hdrs = {'Content-Type':'application/json','apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
-
-async function sb(method, table, body, params='') {
-  const res = await fetch(SUPA_URL+'/rest/v1/'+table+(params?'?'+params:''), {
-    method,
-    headers:{...hdrs,...((method==='POST'||method==='PATCH')?{'Prefer':'return=representation'}:{})},
-    body:body?JSON.stringify(body):undefined
+function sb(method, table, body, params) {
+  params = params || '';
+  return fetch(SUPA_URL+'/rest/v1/'+table+(params?'?'+params:''), {
+    method: method,
+    headers: Object.assign({}, hdrs, (method==='POST'||method==='PATCH')?{'Prefer':'return=representation'}:{}),
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(res){
+    if(!res.ok) return res.text().then(function(e){ throw new Error(e); });
+    return res.text().then(function(txt){ return txt ? JSON.parse(txt) : null; });
   });
-  if (!res.ok){const e=await res.text();throw new Error(e);}
-  const txt=await res.text();
-  return txt?JSON.parse(txt):null;
 }
 
-async function getUser(ig){
-  const r=await sb('GET','users',null,'ig=eq.'+encodeURIComponent(ig)+'&select=*');
-  return r&&r[0]?r[0]:null;
-}
-async function getUserTickets(ig){
-  return await sb('GET','tickets',null,'ig=eq.'+encodeURIComponent(ig)+'&order=ticket_num.asc')||[];
-}
-async function getAllTickets(){
-  return await sb('GET','tickets',null,'order=ticket_num.asc')||[];
-}
-async function getAllUsers(){
-  return await sb('GET','users',null,'order=created_at.asc&select=*')||[];
-}
-async function insertTicket(ig,reason){
-  return await sb('POST','tickets',{ig,reason});
-}
-async function insertUser(ig,isEarly){
-  return await sb('POST','users',{ig,is_early:isEarly,arrived_at:new Date().toISOString(),scanned:{}});
-}
-async function updateScanned(ig,scanned){
-  await sb('PATCH','users',{scanned},'ig=eq.'+encodeURIComponent(ig));
-}
-async function getInteractions(ig){
-  // 自分がスキャンした or スキャンされた
-  const sent=await sb('GET','interactions',null,'scanner_ig=eq.'+encodeURIComponent(ig)+'&order=created_at.desc')||[];
-  const recv=await sb('GET','interactions',null,'scanned_ig=eq.'+encodeURIComponent(ig)+'&order=created_at.desc')||[];
-  return {sent,recv};
-}
-async function insertInteraction(scannerIg,scannedIg){
-  return await sb('POST','interactions',{scanner_ig:scannerIg,scanned_ig:scannedIg});
-}
+function getUser(ig){ return sb('GET','users',null,'ig=eq.'+encodeURIComponent(ig)+'&select=*').then(function(r){ return r&&r[0]?r[0]:null; }); }
+function getUserTickets(ig){ return sb('GET','tickets',null,'ig=eq.'+encodeURIComponent(ig)+'&order=ticket_num.asc').then(function(r){ return r||[]; }); }
+function getAllTickets(){ return sb('GET','tickets',null,'order=ticket_num.asc').then(function(r){ return r||[]; }); }
+function getAllUsers(){ return sb('GET','users',null,'order=created_at.asc&select=*').then(function(r){ return r||[]; }); }
+function insertTicket(ig,reason){ return sb('POST','tickets',{ig:ig,reason:reason}); }
+function insertUser(ig,isEarly){ return sb('POST','users',{ig:ig,is_early:isEarly,arrived_at:new Date().toISOString(),scanned:{}}); }
+function updateScanned(ig,scanned){ return sb('PATCH','users',{scanned:scanned},'ig=eq.'+encodeURIComponent(ig)); }
 
 function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
 }
 
-function toast(msg,gold=false){
-  const el=document.getElementById('toast');
-  el.textContent=msg;
-  el.className='toast-msg'+(gold?' gold':'')+' show';
+function toast(msg, gold){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast-msg'+(gold?' gold':'')+' show';
   clearTimeout(el._t);
-  el._t=setTimeout(()=>el.classList.remove('show'),2800);
+  el._t = setTimeout(function(){ el.classList.remove('show'); }, 2800);
 }
 
-function isEarlyEntry(){
-  const now=new Date();
-  return now.getHours()<EARLY_CUTOFF_HOUR||(now.getHours()===EARLY_CUTOFF_HOUR&&now.getMinutes()<EARLY_CUTOFF_MIN);
+function isEarly(){
+  var now = new Date();
+  return now.getHours() < EARLY_H || (now.getHours() === EARLY_H && now.getMinutes() < EARLY_M);
 }
-
-async function doLogin(){
-  const ig=document.getElementById('ig-inp').value.trim().replace(/^@/,'');
-  const pw=document.getElementById('pw-inp').value;
-  const err=document.getElementById('login-err');
-  const btn=document.getElementById('login-btn');
-  err.textContent='';
-  if(!ig){err.textContent='Instagram IDを入力してください';return;}
-  if(pw!==EVENT_PW){err.textContent='パスワードが違います';return;}
-  btn.disabled=true;btn.textContent='確認中...';
-  try{
-    let user=await getUser(ig);
-    if(!user){
-      const early=isEarlyEntry();
-      await insertUser(ig,early);
-      await insertTicket(ig,'入場');
-      if(early)await insertTicket(ig,'早期入場');
-      user=await getUser(ig);
-      toast(early?'入場！早期ボーナスで +2枚！🎉':'入場！チケット +1枚！🎉',true);
-    }else{
-      toast('おかえり！👋',true);
-    }
-    currentUser=user;
-    await refreshUser();
-    showScreen('user-screen');
-  }catch(e){err.textContent='エラー: '+e.message;}
-  btn.disabled=false;btn.textContent='入場する';
-}
-
-async function refreshUser(){
-  if(!currentUser)return;
-  const user=await getUser(currentUser.ig);
-  if(user)currentUser=user;
-  const tkts=await getUserTickets(currentUser.ig);
-  const allTkts=await getAllTickets();
-  document.getElementById('u-hdr-name').textContent='@'+currentUser.ig;
-  document.getElementById('u-tkt-cnt').textContent=tkts.length;
-
-  // ランキング計算
-  const map={};
-  allTkts.forEach(t=>{map[t.ig]=(map[t.ig]||0)+1;});
-  const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]);
-  const rank=sorted.findIndex(([ig])=>ig===currentUser.ig)+1;
-  document.getElementById('u-rank').textContent=rank>0?rank+'位':'-';
-
-  const grid=document.getElementById('tkt-grid');
-  if(!tkts.length){
-    grid.innerHTML='<div style="color:#555;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;grid-column:span 5;padding:4px 0;">まだチケットがありません</div>';
-  }else{
-    grid.innerHTML=tkts.map(t=>`
-      <div class="tkt">
-        <div class="tkt-num">#${t.ticket_num}</div>
-        <div class="tkt-src">${t.reason}</div>
-      </div>`).join('');
-  }
-  await checkHourly();
-}
-
-async function checkHourly(){
-  if(!currentUser)return;
-  const arrivedAt=new Date(currentUser.arrived_at).getTime();
-  const now=Date.now();
-  const slots=Math.floor((now-arrivedAt)/HALF_HOUR_MS);
-  const tkts=await getUserTickets(currentUser.ig);
-  const bonusTkts=tkts.filter(t=>t.reason==='滞在ボーナス').length;
-  const due=slots-bonusTkts;
-  for(let i=0;i<due;i++)await insertTicket(currentUser.ig,'滞在ボーナス');
-  if(due>0)toast('滞在ボーナス +'+due+'枚！⏱',true);
-}
-
-async function renderQr(){
-  if(!currentUser)return;
-  const user=await getUser(currentUser.ig);
-  currentUser=user;
-  const scanned=user.scanned||{};
-  const container=document.getElementById('qr-list');
-
-  let html='<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin-bottom:8px;">主催者QR</div>';
-  HOST_SPOTS.forEach(s=>{
-    const done=scanned[s.id];
-    html+=`<div class="spot ${done?'done':''}" onclick="scanSpot('${s.id}')">
-      <div>
-        <div class="spot-name">${s.emoji} ${s.name}</div>
-        <div class="spot-sub">${s.sub}</div>
-      </div>
-      <div class="badge ${done?'done':'pending'}">${done?'取得済み':'+1枚'}</div>
-    </div>`;
-  });
-
-  html+='<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin:14px 0 8px;">会場内QR</div>';
-  VENUE_SPOTS.forEach(s=>{
-    const done=scanned[s.id];
-    html+=`<div class="spot ${done?'done':''}" onclick="scanSpot('${s.id}')">
-      <div>
-        <div class="spot-name">${s.emoji} ${s.name}</div>
-        <div class="spot-sub">${s.sub}</div>
-      </div>
-      <div class="badge ${done?'done':'pending'}">${done?'取得済み':'+1枚'}</div>
-    </div>`;
-  });
-  container.innerHTML=html;
-}
-
-async function scanSpot(spotId){
-  const user=await getUser(currentUser.ig);
-  const scanned=user.scanned||{};
-  if(scanned[spotId]){toast('このQRは取得済みです');return;}
-  scanned[spotId]=true;
-  await updateScanned(currentUser.ig,scanned);
-  const spot=ALL_SPOTS.find(s=>s.id===spotId);
-  await insertTicket(currentUser.ig,spot.name);
-  toast(spot.name+' +1枚！🎉',true);
-  currentUser.scanned=scanned;
-  await renderQr();
-}
-
-function renderMyQr(){
-  if(!currentUser)return;
-  const ig=currentUser.ig;
-  document.getElementById('my-qr-label').textContent='@'+ig;
-  const container=document.getElementById('my-qr-code');
-  container.innerHTML='';
-  // インスタプロフィールURLをQR化
-  new QRCode(container,{
-    text:'https://instagram.com/'+ig,
-    width:180,height:180,
-    colorDark:'#000000',colorLight:'#ffffff',
-    correctLevel:QRCode.CorrectLevel.H
-  });
-}
-
-function switchInstaTab(tab){
-  document.getElementById('insta-myqr').style.display=tab==='myqr'?'block':'none';
-  document.getElementById('insta-scan').style.display=tab==='scan'?'block':'none';
-  document.getElementById('insta-history').style.display=tab==='history'?'block':'none';
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-}
-
-async function doInstaExchange(){
-  const targetIg=document.getElementById('scan-ig-inp').value.trim().replace(/^@/,'');
-  const err=document.getElementById('scan-err');
-  err.textContent='';
-  if(!targetIg){err.textContent='相手のIDを入力してください';return;}
-  if(targetIg===currentUser.ig){err.textContent='自分自身とは交流できません';return;}
-  try{
-    const targetUser=await getUser(targetIg);
-    if(!targetUser){err.textContent='@'+targetIg+' は未入場です';return;}
-
-    // 自分→相手のinteractionを追加
-    await insertInteraction(currentUser.ig,targetIg);
-    await insertTicket(currentUser.ig,'インスタ交流(@'+targetIg+')');
-    toast('@'+targetIg+' をスキャン！+1枚 📸',true);
-
-    // 相手→自分のinteractionが既にあったら相手にも+1枚
-    const existing=await sb('GET','interactions',null,
-      'scanner_ig=eq.'+encodeURIComponent(targetIg)+'&scanned_ig=eq.'+encodeURIComponent(currentUser.ig));
-    if(existing&&existing.length>0){
-      await insertTicket(targetIg,'インスタ交流(@'+currentUser.ig+')');
-      toast('相互スキャン達成！@'+targetIg+' にも+1枚 🎉',true);
-    }
-
-    document.getElementById('scan-ig-inp').value='';
-  }catch(e){
-    if(e.message.includes('unique')||e.message.includes('duplicate')){
-      err.textContent='@'+targetIg+' とは既に交流済みです';
-    }else{
-      err.textContent='エラー: '+e.message;
-    }
-  }
-}
-
-async function loadInteractions(){
-  const {sent,recv}=await getInteractions(currentUser.ig);
-  const list=document.getElementById('interaction-list');
-  if(!sent.length&&!recv.length){
-    list.innerHTML='<div style="color:#555;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;">まだ交流がありません</div>';
-    return;
-  }
-  const allInts=[...sent.map(i=>({ig:i.scanned_ig,type:'送信',at:i.created_at})),
-                 ...recv.map(i=>({ig:i.scanner_ig,type:'受信',at:i.created_at}))];
-  allInts.sort((a,b)=>new Date(b.at)-new Date(a.at));
-  list.innerHTML=allInts.map(i=>`
-    <div class="interaction-row">
-      <div>
-        <div class="int-ig">@${i.ig}</div>
-        <div class="int-time">${i.type} · ${new Date(i.at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}</div>
-      </div>
-      <div style="font-size:10px;color:#c8a84b;">${i.type==='送信'?'📤':'📥'}</div>
-    </div>`).join('');
-}
-
-async function renderRanking(){
-  const allTkts=await getAllTickets();
-  const allUsers=await getAllUsers();
-  const map={};
-  allTkts.forEach(t=>{map[t.ig]=(map[t.ig]||0)+1;});
-  const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]);
-  const prizes=['ライブペイント作品','オリジナルTシャツ','限定グッズ'];
-  const prizeClass=['prize-1','prize-2','prize-3'];
-  const rankClass=['rank-1','rank-2','rank-3'];
-  const container=document.getElementById('ranking-list');
-  if(!sorted.length){
-    container.innerHTML='<div style="color:#555;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;">まだランキングデータがありません</div>';
-    return;
-  }
-  container.innerHTML=sorted.map(([ig,cnt],i)=>{
-    const isMe=ig===currentUser.ig;
-    const rank=i+1;
-    return `<div class="rank-row" style="${isMe?'border-color:#1a1aff;background:#0a0a1a;':''}">
-      <div class="rank-num ${rank<=3?rankClass[rank-1]:''}">${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</div>
-      <div class="rank-info">
-        <div class="rank-ig">@${ig}${isMe?' ← YOU':''}</div>
-        <div class="rank-cnt">${cnt}枚</div>
-        ${rank<=3?`<div class="rank-prize"><span class="prize-badge ${prizeClass[rank-1]}">${rank}位</span> ${prizes[rank-1]}</div>`:''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function doAdminLogin(){
-  const pw=document.getElementById('admin-pw-inp').value;
-  const err=document.getElementById('admin-login-err');
-  if(pw!==ADMIN_PW){err.textContent='管理者パスワードが違います';return;}
-  await refreshAdmin();
-  showScreen('admin-screen');
-}
-
-async function refreshAdmin(){
-  try{
-    const users=await getAllUsers();
-    const allTkts=await getAllTickets();
-    document.getElementById('ad-visitors').textContent=users.length;
-    document.getElementById('ad-tkts').textContent=allTkts.length;
-    document.getElementById('ad-early').textContent=users.filter(u=>u.is_early).length;
-    const map={};
-    allTkts.forEach(t=>{map[t.ig]=(map[t.ig]||0)+1;});
-    const sorted=Object.entries(map).sort((a,b)=>b[1]-a[1]);
-    const prizes=['🥇 ライブペイント作品','🥈 オリジナルTシャツ','🥉 限定グッズ'];
-    const prizeClass=['prize-1','prize-2','prize-3'];
-
-    // ランキング
-    const rkEl=document.getElementById('ad-ranking');
-    rkEl.innerHTML=sorted.slice(0,10).map(([ig,cnt],i)=>`
-      <div class="rank-row">
-        <div class="rank-num ${i<3?['rank-1','rank-2','rank-3'][i]:''}">${i<3?['🥇','🥈','🥉'][i]:i+1}</div>
-        <div class="rank-info">
-          <div class="rank-ig">@${ig}</div>
-          <div class="rank-cnt">${cnt}枚</div>
-          ${i<3?`<div class="rank-prize"><span class="prize-badge ${prizeClass[i]}">${i+1}位</span> ${prizes[i].slice(3)}</div>`:''}
-        </div>
-      </div>`).join('');
-
-    // 来場者一覧
-    const ul=document.getElementById('ad-users');
-    if(!users.length){ul.innerHTML='<div style="color:#555;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;">まだ来場者がいません</div>';return;}
-    ul.innerHTML=users.map(u=>`
-      <div class="user-row">
-        <div>
-          <div>@${u.ig}</div>
-          <div class="u-sub">${new Date(u.arrived_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})} 入場${u.is_early?' · 早期':''}</div>
-        </div>
-        <div class="gold" style="font-weight:700;font-size:14px;">${map[u.ig]||0}枚</div>
-      </div>`).join('');
-  }catch(e){toast('取得エラー: '+e.message);}
-}
-
-async function giveChampagne(){
-  const ig=document.getElementById('give-ig').value.trim().replace(/^@/,'');
-  const err=document.getElementById('give-err');
-  err.textContent='';
-  if(!ig){err.textContent='アカウント名を入力してください';return;}
-  try{
-    const user=await getUser(ig);
-    if(!user){err.textContent='@'+ig+' は未入場です';return;}
-    await insertTicket(ig,'シャンパン🍾');
-    await insertTicket(ig,'シャンパン🍾');
-    toast('@'+ig+' に +2枚付与！🍾',true);
-    document.getElementById('give-ig').value='';
-    await refreshAdmin();
-  }catch(e){err.textContent='エラー: '+e.message;}
-}
-
-function doLogout(){currentUser=null;showScreen('login-screen');}
-function doAdminLogout(){showScreen('login-screen');}
-function showUserTab(screen){showScreen('user-screen');switchTab('home');}
-
-
-
-
-
 
 function switchTab(tab) {
-  ['home','ticket','qr','ranking'].forEach(t => {
-    const content = document.getElementById('tab-'+t);
-    const btn = document.getElementById('nav-'+t);
-    if(content) content.style.display = t===tab ? 'block' : 'none';
-    if(btn) btn.classList.toggle('active', t===tab);
+  ['home','ticket','qr','ranking'].forEach(function(t){
+    var c = document.getElementById('tab-'+t);
+    var b = document.getElementById('nav-'+t);
+    if(c) c.className = 'tab-content' + (t===tab?' active':'');
+    if(b) b.className = 'nav-btn' + (t===tab?' active':'');
   });
 }
 
-  container.innerHTML = sorted.map(([ig,cnt],i) => {
-    const isMe = ig === currentUser?.ig;
-    const rank = i+1;
-    return \`<div class="rank-row" style="\${isMe?'border-color:#1a1aff;background:#0a0a1a;':''}">
-      <div class="rank-num \${rank<=3?rankClass[rank-1]:''}">\${rank<=3?['🥇','🥈','🥉'][rank-1]:rank}</div>
-      <div class="rank-info">
-        <div class="rank-ig">@\${ig}\${isMe?' ← YOU':''}</div>
-        <div class="rank-cnt">\${cnt}枚</div>
-        \${rank<=3?\`<div class="rank-prize"><span class="prize-badge \${prizeClass[rank-1]}">\${rank}位</span> \${prizes[rank-1]}</div>\`:''}
-      </div>
-    </div>\`;
-  }).join('');
+function switchInstaTab(tab) {
+  document.getElementById('insta-myqr').style.display = tab==='myqr'?'block':'none';
+  document.getElementById('insta-scan').style.display = tab==='scan'?'block':'none';
+  document.getElementById('insta-history').style.display = tab==='history'?'block':'none';
+  ['myqr','scan','history'].forEach(function(t){
+    document.getElementById('itab-'+t).className = 'tab-btn'+(t===tab?' active':'');
+  });
 }
 
-// URL経由でQRスキャン対応
+function doLogin() {
+  var ig = document.getElementById('ig-inp').value.trim().replace(/^@/,'');
+  var pw = document.getElementById('pw-inp').value;
+  var err = document.getElementById('login-err');
+  var btn = document.getElementById('login-btn');
+  err.textContent = '';
+  if(!ig){ err.textContent='Instagram IDを入力してください'; return; }
+  if(pw !== EVENT_PW){ err.textContent='パスワードが違います'; return; }
+  btn.disabled = true; btn.textContent = '確認中...';
+  getUser(ig).then(function(user){
+    if(!user){
+      var early = isEarly();
+      return insertUser(ig, early).then(function(){
+        return insertTicket(ig,'入場');
+      }).then(function(){
+        if(early) return insertTicket(ig,'早期入場');
+      }).then(function(){
+        return getUser(ig);
+      }).then(function(u){
+        toast(early?'入場！早期ボーナスで +2枚！':'入場！チケット +1枚！', true);
+        return u;
+      });
+    } else {
+      toast('おかえり！', true);
+      return user;
+    }
+  }).then(function(user){
+    currentUser = user;
+    return refreshUser();
+  }).then(function(){
+    showScreen('user-screen');
+    btn.disabled = false; btn.textContent = '入場する';
+  }).catch(function(e){
+    err.textContent = 'エラー: '+e.message;
+    btn.disabled = false; btn.textContent = '入場する';
+  });
+}
+
+function refreshUser() {
+  if(!currentUser) return Promise.resolve();
+  return getUser(currentUser.ig).then(function(user){
+    if(user) currentUser = user;
+    return Promise.all([getUserTickets(currentUser.ig), getAllTickets()]);
+  }).then(function(results){
+    var tkts = results[0];
+    var allTkts = results[1];
+    document.getElementById('u-hdr-name').textContent = '@'+currentUser.ig;
+    document.getElementById('u-tkt-cnt').textContent = tkts.length;
+    var map = {};
+    allTkts.forEach(function(t){ map[t.ig] = (map[t.ig]||0)+1; });
+    var sorted = Object.entries(map).sort(function(a,b){ return b[1]-a[1]; });
+    var rank = sorted.findIndex(function(x){ return x[0]===currentUser.ig; })+1;
+    document.getElementById('u-rank').textContent = rank>0?rank+'位':'-';
+    var grid = document.getElementById('tkt-grid');
+    if(!tkts.length){
+      grid.innerHTML = '<div style="color:#888;font-size:11px;font-family:\'Noto Sans JP\',sans-serif;grid-column:span 5;padding:8px 0;">まだチケットがありません</div>';
+    } else {
+      grid.innerHTML = tkts.map(function(t){
+        return '<div class="tkt"><div class="tkt-num">#'+t.ticket_num+'</div><div class="tkt-src">'+t.reason+'</div></div>';
+      }).join('');
+    }
+    return checkHourly();
+  });
+}
+
+function checkHourly() {
+  if(!currentUser) return Promise.resolve();
+  var arrivedAt = new Date(currentUser.arrived_at).getTime();
+  var now = Date.now();
+  var slots = Math.floor((now - arrivedAt) / HALF_HOUR_MS);
+  return getUserTickets(currentUser.ig).then(function(tkts){
+    var bonusTkts = tkts.filter(function(t){ return t.reason==='滞在ボーナス'; }).length;
+    var due = slots - bonusTkts;
+    var p = Promise.resolve();
+    for(var i=0;i<due;i++){
+      p = p.then(function(){ return insertTicket(currentUser.ig,'滞在ボーナス'); });
+    }
+    if(due>0) p = p.then(function(){ toast('滞在ボーナス +'+due+'枚！', true); });
+    return p;
+  });
+}
+
+function renderQr() {
+  if(!currentUser) return;
+  getUser(currentUser.ig).then(function(user){
+    currentUser = user;
+    var scanned = user.scanned || {};
+    var html = '<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin-bottom:8px;font-family:\'Space Mono\',monospace;">主催者QR</div>';
+    HOST_SPOTS.forEach(function(s){
+      var done = scanned[s.id];
+      html += '<div class="spot'+(done?' done':'')+'" onclick="scanSpot(\''+s.id+'\')">'
+        +'<div><div class="spot-name">'+s.emoji+' '+s.name+'</div><div class="spot-sub">'+s.sub+'</div></div>'
+        +'<div class="badge '+(done?'done':'pending')+'">'+(done?'取得済み':'+1枚')+'</div></div>';
+    });
+    html += '<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin:14px 0 8px;font-family:\'Space Mono\',monospace;">会場内QR</div>';
+    VENUE_SPOTS.forEach(function(s){
+      var done = scanned[s.id];
+      html += '<div class="spot'+(done?' done':'')+'" onclick="scanSpot(\''+s.id+'\')">'
+        +'<div><div class="spot-name">'+s.emoji+' '+s.name+'</div><div class="spot-sub">'+s.sub+'</div></div>'
+        +'<div class="badge '+(done?'done':'pending')+'">'+(done?'取得済み':'+1枚')+'</div></div>';
+    });
+    document.getElementById('qr-list').innerHTML = html;
+  });
+}
+
+function scanSpot(spotId) {
+  getUser(currentUser.ig).then(function(user){
+    var scanned = user.scanned || {};
+    if(scanned[spotId]){ toast('このQRは取得済みです'); return; }
+    scanned[spotId] = true;
+    var spot = ALL_SPOTS.filter(function(s){ return s.id===spotId; })[0];
+    return updateScanned(currentUser.ig, scanned).then(function(){
+      return insertTicket(currentUser.ig, spot.name);
+    }).then(function(){
+      toast(spot.name+' +1枚！', true);
+      currentUser.scanned = scanned;
+      renderQr();
+    });
+  });
+}
+
+function renderRanking() {
+  getAllTickets().then(function(allTkts){
+    var map = {};
+    allTkts.forEach(function(t){ map[t.ig]=(map[t.ig]||0)+1; });
+    var sorted = Object.entries(map).sort(function(a,b){ return b[1]-a[1]; });
+    var prizes = ['ライブペイント作品','オリジナルTシャツ','限定グッズ'];
+    var prizeClass = ['prize-1','prize-2','prize-3'];
+    var medals = ['🥇','🥈','🥉'];
+    var rankClass = ['rank-1','rank-2','rank-3'];
+    var container = document.getElementById('ranking-list');
+    if(!sorted.length){ container.innerHTML='<div style="color:#888;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;">まだランキングデータがありません</div>'; return; }
+    var rows = '';
+    for(var i=0;i<sorted.length;i++){
+      var ig = sorted[i][0], cnt = sorted[i][1];
+      var isMe = currentUser && ig===currentUser.ig;
+      var rank = i+1;
+      var medal = rank<=3 ? medals[rank-1] : rank;
+      var prizeHtml = rank<=3 ? '<div class="rank-prize"><span class="prize-badge '+prizeClass[rank-1]+'">'+rank+'位</span> '+prizes[rank-1]+'</div>' : '';
+      rows += '<div class="rank-row" style="'+(isMe?'border-color:#1a1aff;background:#0a0a1a;':'')+'">'
+        +'<div class="rank-num '+(rank<=3?rankClass[rank-1]:'')+'">'+medal+'</div>'
+        +'<div class="rank-info"><div class="rank-ig">@'+ig+(isMe?' ← YOU':'')+'</div><div class="rank-cnt">'+cnt+'枚</div>'+prizeHtml+'</div></div>';
+    }
+    container.innerHTML = rows;
+  });
+}
+
+function renderMyQr() {
+  if(!currentUser) return;
+  document.getElementById('my-qr-label').textContent = '@'+currentUser.ig;
+  var container = document.getElementById('my-qr-code');
+  container.innerHTML = '';
+  new QRCode(container, {
+    text: 'https://instagram.com/'+currentUser.ig,
+    width:180, height:180, colorDark:'#000000', colorLight:'#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
+function doInstaExchange() {
+  var targetIg = document.getElementById('scan-ig-inp').value.trim().replace(/^@/,'');
+  var err = document.getElementById('scan-err');
+  err.textContent = '';
+  if(!targetIg){ err.textContent='相手のIDを入力してください'; return; }
+  if(targetIg===currentUser.ig){ err.textContent='自分自身とは交流できません'; return; }
+  getUser(targetIg).then(function(targetUser){
+    if(!targetUser){ err.textContent='@'+targetIg+' は未入場です'; return; }
+    return sb('POST','interactions',{scanner_ig:currentUser.ig,scanned_ig:targetIg}).then(function(){
+      return insertTicket(currentUser.ig,'インスタ交流(@'+targetIg+')');
+    }).then(function(){
+      toast('@'+targetIg+' をスキャン！+1枚', true);
+      return sb('GET','interactions',null,'scanner_ig=eq.'+encodeURIComponent(targetIg)+'&scanned_ig=eq.'+encodeURIComponent(currentUser.ig));
+    }).then(function(existing){
+      if(existing && existing.length>0){
+        return insertTicket(targetIg,'インスタ交流(@'+currentUser.ig+')').then(function(){
+          toast('相互スキャン！@'+targetIg+'にも+1枚', true);
+        });
+      }
+    }).then(function(){
+      document.getElementById('scan-ig-inp').value = '';
+    });
+  }).catch(function(e){
+    if(e.message.indexOf('unique')>-1||e.message.indexOf('duplicate')>-1){
+      err.textContent = '@'+targetIg+' とは既に交流済みです';
+    } else {
+      err.textContent = 'エラー: '+e.message;
+    }
+  });
+}
+
+function loadInteractions() {
+  Promise.all([
+    sb('GET','interactions',null,'scanner_ig=eq.'+encodeURIComponent(currentUser.ig)+'&order=created_at.desc'),
+    sb('GET','interactions',null,'scanned_ig=eq.'+encodeURIComponent(currentUser.ig)+'&order=created_at.desc')
+  ]).then(function(results){
+    var sent = results[0]||[], recv = results[1]||[];
+    var list = document.getElementById('interaction-list');
+    if(!sent.length&&!recv.length){ list.innerHTML='<div style="color:#888;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;">まだ交流がありません</div>'; return; }
+    var all = sent.map(function(i){ return {ig:i.scanned_ig,type:'送信',at:i.created_at}; })
+              .concat(recv.map(function(i){ return {ig:i.scanner_ig,type:'受信',at:i.created_at}; }));
+    all.sort(function(a,b){ return new Date(b.at)-new Date(a.at); });
+    list.innerHTML = all.map(function(i){
+      return '<div style="background:#2a2620;border:1px solid #3a3530;border-radius:6px;padding:9px 13px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
+        +'<div><div style="font-size:11px;font-weight:700;">@'+i.ig+'</div><div style="font-size:8px;color:#666;font-family:\'Noto Sans JP\',sans-serif;">'+i.type+' · '+new Date(i.at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+'</div></div>'
+        +'<div style="font-size:14px;">'+(i.type==='送信'?'📤':'📥')+'</div></div>';
+    }).join('');
+  });
+}
+
+function doAdminLogin() {
+  var pw = document.getElementById('admin-pw-inp').value;
+  var err = document.getElementById('admin-login-err');
+  if(pw!==ADMIN_PW){ err.textContent='管理者パスワードが違います'; return; }
+  refreshAdmin().then(function(){ showScreen('admin-screen'); });
+}
+
+function refreshAdmin() {
+  return Promise.all([getAllUsers(), getAllTickets()]).then(function(results){
+    var users = results[0], allTkts = results[1];
+    document.getElementById('ad-visitors').textContent = users.length;
+    document.getElementById('ad-tkts').textContent = allTkts.length;
+    document.getElementById('ad-early').textContent = users.filter(function(u){ return u.is_early; }).length;
+    var map = {};
+    allTkts.forEach(function(t){ map[t.ig]=(map[t.ig]||0)+1; });
+    var sorted = Object.entries(map).sort(function(a,b){ return b[1]-a[1]; });
+    var prizes = ['🥇ライブペイント作品','🥈オリジナルTシャツ','🥉限定グッズ'];
+    var prizeClass = ['prize-1','prize-2','prize-3'];
+    var medals = ['🥇','🥈','🥉'];
+    var rankClass = ['rank-1','rank-2','rank-3'];
+    var rkEl = document.getElementById('ad-ranking');
+    rkEl.innerHTML = sorted.slice(0,10).map(function(x,i){
+      var rank=i+1;
+      return '<div class="rank-row"><div class="rank-num '+(rank<=3?rankClass[i]:'')+'">'+( rank<=3?medals[i]:rank)+'</div>'
+        +'<div class="rank-info"><div class="rank-ig">@'+x[0]+'</div><div class="rank-cnt">'+x[1]+'枚</div>'
+        +(rank<=3?'<div class="rank-prize"><span class="prize-badge '+prizeClass[i]+'">'+rank+'位</span> '+prizes[i].slice(2)+'</div>':'')
+        +'</div></div>';
+    }).join('');
+    var ul = document.getElementById('ad-users');
+    if(!users.length){ ul.innerHTML='<div style="color:#888;font-size:10px;font-family:\'Noto Sans JP\',sans-serif;">まだ来場者がいません</div>'; return; }
+    ul.innerHTML = users.map(function(u){
+      return '<div class="user-row"><div><div>@'+u.ig+'</div><div class="u-sub">'+new Date(u.arrived_at).toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})+' 入場'+(u.is_early?' · 早期':'')+'</div></div><div class="gold" style="font-weight:700;font-size:14px;">'+(map[u.ig]||0)+'枚</div></div>';
+    }).join('');
+  });
+}
+
+function giveChampagne() {
+  var ig = document.getElementById('give-ig').value.trim().replace(/^@/,'');
+  var err = document.getElementById('give-err');
+  err.textContent = '';
+  if(!ig){ err.textContent='アカウント名を入力してください'; return; }
+  getUser(ig).then(function(user){
+    if(!user){ err.textContent='@'+ig+' は未入場です'; return; }
+    return insertTicket(ig,'シャンパン🍾').then(function(){
+      return insertTicket(ig,'シャンパン🍾');
+    }).then(function(){
+      toast('@'+ig+' に +2枚付与！', true);
+      document.getElementById('give-ig').value = '';
+      return refreshAdmin();
+    });
+  }).catch(function(e){ err.textContent='エラー: '+e.message; });
+}
+
+function doLogout(){ currentUser=null; showScreen('login-screen'); }
+function doAdminLogout(){ showScreen('login-screen'); }
+
+// QR URL対応
 function checkUrlQr(){
-  const params=new URLSearchParams(window.location.search);
-  const qr=params.get('qr');
-  if(qr&&currentUser){
-    scanSpot(qr);
-    window.history.replaceState({},'',window.location.pathname);
-  }
+  var params = new URLSearchParams(window.location.search);
+  var qr = params.get('qr');
+  if(qr && currentUser){ scanSpot(qr); window.history.replaceState({},'',window.location.pathname); }
 }
 
-(async()=>{
-  const overlay=document.getElementById('loading-overlay');
-  const txt=document.getElementById('load-txt');
-  try{
-    await sb('GET','users',null,'limit=1');
-  }catch(e){
-    console.warn('Supabase connection failed:', e.message);
-  }
-  overlay.style.display='none';
+// 起動
+sb('GET','users',null,'limit=1').then(function(){
+  document.getElementById('loading-overlay').style.display = 'none';
   showScreen('login-screen');
-})();
+}).catch(function(e){
+  document.getElementById('loading-overlay').style.display = 'none';
+  showScreen('login-screen');
+  console.warn('Supabase:', e.message);
+});
 
-
-async function renderRankingHome() {
-  const allTkts = await getAllTickets();
-  const map = {};
-  allTkts.forEach(function(t){ map[t.ig] = (map[t.ig]||0)+1; });
-  const sorted = Object.entries(map).sort(function(a,b){ return b[1]-a[1]; });
-  const prizes = ['ライブペイント作品','オリジナルTシャツ','限定グッズ'];
-  const prizeClass = ['prize-1','prize-2','prize-3'];
-  const rankClass = ['rank-1','rank-2','rank-3'];
-  const container = document.getElementById('ranking-list-home');
-  if(!container) return;
-  if(!sorted.length) {
-    container.innerHTML = '<div style="color:#888;font-size:10px;font-family:'Noto Sans JP',sans-serif;">まだランキングデータがありません</div>';
-    return;
-  }
-  var rows = '';
-  for(var i=0; i<sorted.length; i++) {
-    var ig = sorted[i][0];
-    var cnt = sorted[i][1];
-    var isMe = currentUser && ig === currentUser.ig;
-    var rank = i+1;
-    var medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':rank;
-    var prizeHtml = rank<=3 ? '<div class="rank-prize"><span class="prize-badge '+prizeClass[rank-1]+'">'+rank+'位</span> '+prizes[rank-1]+'</div>' : '';
-    rows += '<div class="rank-row" style="'+(isMe?'border-color:#1a1aff;background:#0a0a1a;':'')+'">'
-      + '<div class="rank-num '+(rank<=3?rankClass[rank-1]:'')+'">'+medal+'</div>'
-      + '<div class="rank-info">'
-      + '<div class="rank-ig">@'+ig+(isMe?' ← YOU':'')+'</div>'
-      + '<div class="rank-cnt">'+cnt+'枚</div>'
-      + prizeHtml
-      + '</div></div>';
-  }
-  container.innerHTML = rows;
-}
-
-setInterval(()=>{
-  if(currentUser&&document.getElementById('user-screen').classList.contains('active'))checkHourly();
-  if(currentUser&&document.getElementById('admin-screen').classList.contains('active'))refreshAdmin();
-},60000);
+setInterval(function(){
+  if(currentUser && document.getElementById('user-screen').classList.contains('active')) checkHourly();
+  if(document.getElementById('admin-screen').classList.contains('active')) refreshAdmin();
+}, 60000);
 </script>
 </body>
 </html>
