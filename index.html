@@ -456,28 +456,7 @@ function checkHourly() {
   });
 }
 
-function renderQr() {
-  if(!currentUser) return;
-  getUser(currentUser.ig).then(function(user){
-    currentUser = user;
-    var scanned = user.scanned || {};
-    var html = '<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin-bottom:8px;font-family:\'Space Mono\',monospace;">主催者QR</div>';
-    HOST_SPOTS.forEach(function(s){
-      var done = scanned[s.id];
-      html += '<div class="spot'+(done?' done':'')+'" onclick="scanSpot(\''+s.id+'\')">'
-        +'<div><div class="spot-name">'+s.emoji+' '+s.name+'</div><div class="spot-sub">'+s.sub+'</div></div>'
-        +'<div class="badge '+(done?'done':'pending')+'">'+(done?'取得済み':'+1枚')+'</div></div>';
-    });
-    html += '<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin:14px 0 8px;font-family:\'Space Mono\',monospace;">会場内QR</div>';
-    VENUE_SPOTS.forEach(function(s){
-      var done = scanned[s.id];
-      html += '<div class="spot'+(done?' done':'')+'" onclick="scanSpot(\''+s.id+'\')">'
-        +'<div><div class="spot-name">'+s.emoji+' '+s.name+'</div><div class="spot-sub">'+s.sub+'</div></div>'
-        +'<div class="badge '+(done?'done':'pending')+'">'+(done?'取得済み':'+1枚')+'</div></div>';
-    });
-    document.getElementById('qr-list').innerHTML = html;
-  });
-}
+
 
 // scanSpot replaced by handleQrScan
 
@@ -641,6 +620,97 @@ sb('GET','users',null,'limit=1').then(function(){
   showScreen('login-screen');
   console.warn('Supabase:', e.message);
 });
+
+
+function renderQr() {
+  if(!currentUser) return;
+  getUser(currentUser.ig).then(function(user){
+    currentUser = user;
+    var scanned = user.scanned || {};
+    var venueDone = VENUE_SPOTS.filter(function(s){ return scanned[s.id]; }).length;
+    var h = '<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin-bottom:8px;font-family:\'Space Mono\',monospace;">主催者QR</div>';
+    HOST_SPOTS.forEach(function(s){
+      var done = scanned[s.id];
+      h += '<div class="spot' + (done ? ' done' : '') + '" onclick="' + (done ? '' : 'startCameraScan(\''+s.id+'\')') + '">'
+        + '<div><div class="spot-name">' + s.emoji + ' ' + s.name + '</div></div>'
+        + '<div class="badge ' + (done ? 'done' : 'pending') + '">' + (done ? '取得済み' : '📷 スキャン') + '</div></div>';
+    });
+    h += '<div style="font-size:9px;color:#1a1aff;letter-spacing:.15em;margin:14px 0 8px;font-family:\'Space Mono\',monospace;">会場内QR</div>';
+    h += '<div class="spot" onclick="startCameraScan(\'venue\')" style="background:linear-gradient(135deg,#1a1aff22,#2a2620);border-color:#1a1aff;">'
+      + '<div><div class="spot-name">🔍 会場内QR</div>'
+      + '<div style="font-size:10px;color:#aaa;margin-top:4px;font-family:\'Noto Sans JP\',sans-serif;">' + venueDone + ' / ' + VENUE_SPOTS.length + ' 取得済み</div></div>'
+      + '<div class="badge pending" style="border-color:#1a1aff;color:#1a1aff;">📷 スキャン</div></div>';
+    document.getElementById('qr-list').innerHTML = h;
+  });
+}
+
+var currentScanTarget = null;
+var cameraStream = null;
+
+function startCameraScan(target) {
+  currentScanTarget = target;
+  document.getElementById('camera-modal').style.display = 'flex';
+  startCamera();
+}
+
+function startCamera() {
+  var video = document.getElementById('camera-video');
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(function(stream){
+    cameraStream = stream;
+    video.srcObject = stream;
+    video.play();
+    requestAnimationFrame(scanFrame);
+  }).catch(function(e){
+    toast('カメラにアクセスできません');
+    closeCamera();
+  });
+}
+
+function stopCamera() {
+  if(cameraStream){ cameraStream.getTracks().forEach(function(t){ t.stop(); }); cameraStream = null; }
+}
+
+function closeCamera() {
+  stopCamera();
+  document.getElementById('camera-modal').style.display = 'none';
+}
+
+function scanFrame() {
+  if(!cameraStream) return;
+  var video = document.getElementById('camera-video');
+  var canvas = document.getElementById('camera-canvas');
+  if(video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var code = jsQR(imageData.data, imageData.width, imageData.height, {inversionAttempts:'dontInvert'});
+    if(code) {
+      var qrParam = null;
+      try { qrParam = new URL(code.data).searchParams.get('qr'); } catch(e) {}
+      if(qrParam) { closeCamera(); handleQrScan(qrParam); return; }
+    }
+  }
+  if(cameraStream) requestAnimationFrame(scanFrame);
+}
+
+function handleQrScan(spotId) {
+  var validSpot = ALL_SPOTS.filter(function(s){ return s.id === spotId; })[0];
+  if(!validSpot) { toast('有効なQRコードではありません'); return; }
+  getUser(currentUser.ig).then(function(user){
+    var scanned = user.scanned || {};
+    if(scanned[spotId]) { toast('このQRは取得済みです'); return Promise.resolve(); }
+    scanned[spotId] = true;
+    return updateScanned(currentUser.ig, scanned).then(function(){
+      return insertTicket(currentUser.ig, validSpot.name);
+    }).then(function(){
+      toast(validSpot.name + ' +1枚！', true);
+      currentUser.scanned = scanned;
+      renderQr();
+    });
+  });
+}
 
 setInterval(function(){
   if(currentUser && document.getElementById('user-screen').classList.contains('active')) checkHourly();
