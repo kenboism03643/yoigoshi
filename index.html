@@ -196,8 +196,26 @@ body{background:#1a1814;display:flex;align-items:flex-start;justify-content:cent
     </div>
     <!-- QR TAB -->
     <div id="tab-qr" class="tab-content" style="padding:16px;">
-      <div style="font-size:11px;color:#888;margin-bottom:14px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">会場に隠されたQRコードを探せ！各スポット1回限り。
-主催の3人に声をかけて、QRを読み込ませてもらおう！</div>
+      <!-- QR交換セクション -->
+      <div id="exchange-section" style="margin-bottom:16px;">
+        <div onclick="toggleExchange()" style="background:linear-gradient(135deg,#c8a84b22,#2a2620);border:1.5px solid #c8a84b;border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;">
+          <div>
+            <div style="font-size:14px;font-weight:700;font-family:'Shippori Mincho',serif;color:#c8a84b;">QR交換をする 📸</div>
+            <div style="font-size:10px;color:#888;margin-top:3px;font-family:'Noto Sans JP',sans-serif;">相互スキャンでお互い+1枚</div>
+          </div>
+          <div id="exchange-arrow" style="color:#c8a84b;font-size:18px;transition:transform .2s;">▼</div>
+        </div>
+        <div id="exchange-body" style="display:none;background:#2a2620;border:1.5px solid #c8a84b;border-top:none;border-radius:0 0 10px 10px;padding:16px;">
+          <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-size:10px;color:#888;margin-bottom:12px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">このQRを相手に見せてスキャンしてもらおう。<br>お互いスキャンし合うとどちらも+1枚！</div>
+            <div style="background:#fff;padding:12px;border-radius:8px;display:inline-block;" id="exchange-qr-code"></div>
+            <div style="margin-top:8px;font-size:11px;color:#888;font-family:'Space Mono',monospace;" id="exchange-qr-label">@username</div>
+          </div>
+          <button onclick="startExchangeScan()" style="width:100%;background:#c8a84b;color:#0a0a0a;border:none;border-radius:8px;font-family:'Shippori Mincho',serif;font-size:14px;font-weight:700;padding:14px;cursor:pointer;">📷 相手のQRをスキャン</button>
+        </div>
+      </div>
+      <!-- 会場内・主催者QR -->
+      <div style="font-size:11px;color:#888;margin-bottom:14px;font-family:'Noto Sans JP',sans-serif;line-height:1.7;">会場に隠されたQRコードを探せ！各スポット1回限り。<br>主催の3人に声をかけて、QRを読み込ませてもらおう！</div>
       <div id="qr-list"></div>
     </div>
     <!-- RANKING TAB -->
@@ -622,6 +640,38 @@ sb('GET','users',null,'limit=1').then(function(){
 });
 
 
+
+var exchangeOpen = false;
+var exchangeQrRendered = false;
+
+function toggleExchange() {
+  exchangeOpen = !exchangeOpen;
+  document.getElementById('exchange-body').style.display = exchangeOpen ? 'block' : 'none';
+  document.getElementById('exchange-arrow').style.transform = exchangeOpen ? 'rotate(180deg)' : '';
+  if(exchangeOpen && !exchangeQrRendered && currentUser) {
+    renderExchangeQr();
+    exchangeQrRendered = true;
+  }
+}
+
+function renderExchangeQr() {
+  var container = document.getElementById('exchange-qr-code');
+  container.innerHTML = '';
+  document.getElementById('exchange-qr-label').textContent = '@' + currentUser.ig;
+  new QRCode(container, {
+    text: 'https://instagram.com/' + currentUser.ig,
+    width: 180, height: 180,
+    colorDark: '#000000', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
+function startExchangeScan() {
+  currentScanTarget = 'exchange';
+  document.getElementById('camera-modal').style.display = 'flex';
+  startCamera();
+}
+
 function renderQr() {
   if(!currentUser) return;
   getUser(currentUser.ig).then(function(user){
@@ -687,9 +737,16 @@ function scanFrame() {
     var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     var code = jsQR(imageData.data, imageData.width, imageData.height, {inversionAttempts:'dontInvert'});
     if(code) {
+      var url = code.data;
+      // スポットQR: yoigoshi.vercel.app?qr=xxx
       var qrParam = null;
-      try { qrParam = new URL(code.data).searchParams.get('qr'); } catch(e) {}
+      try { qrParam = new URL(url).searchParams.get('qr'); } catch(e) {}
       if(qrParam) { closeCamera(); handleQrScan(qrParam); return; }
+      // インスタ交流QR: instagram.com/username
+      if(currentScanTarget === 'exchange') {
+        var igMatch = url.match(/instagram\.com\/([A-Za-z0-9._]+)/);
+        if(igMatch) { closeCamera(); handleExchangeScan(igMatch[1]); return; }
+      }
     }
   }
   if(cameraStream) requestAnimationFrame(scanFrame);
@@ -709,6 +766,31 @@ function handleQrScan(spotId) {
       currentUser.scanned = scanned;
       renderQr();
     });
+  });
+}
+
+function handleExchangeScan(targetIg) {
+  if(!targetIg || targetIg === currentUser.ig) { toast('自分自身とは交流できません'); return; }
+  getUser(targetIg).then(function(targetUser){
+    if(!targetUser) { toast('@'+targetIg+' は未入場です'); return; }
+    return sb('POST','interactions',{scanner_ig:currentUser.ig,scanned_ig:targetIg}).then(function(){
+      return insertTicket(currentUser.ig,'インスタ交流(@'+targetIg+')');
+    }).then(function(){
+      toast('@'+targetIg+' をスキャン！+1枚', true);
+      return sb('GET','interactions',null,'scanner_ig=eq.'+encodeURIComponent(targetIg)+'&scanned_ig=eq.'+encodeURIComponent(currentUser.ig));
+    }).then(function(existing){
+      if(existing && existing.length > 0){
+        return insertTicket(targetIg,'インスタ交流(@'+currentUser.ig+')').then(function(){
+          toast('相互スキャン達成！@'+targetIg+' にも+1枚', true);
+        });
+      }
+    });
+  }).catch(function(e){
+    if(e.message.indexOf('unique')>-1||e.message.indexOf('duplicate')>-1){
+      toast('@'+targetIg+' とは既に交流済みです');
+    } else {
+      toast('エラー: '+e.message);
+    }
   });
 }
 
